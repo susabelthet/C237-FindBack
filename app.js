@@ -108,9 +108,93 @@ app.get('/', (req, res) => {
     });
 });
 
-// Temporary browse page (to be built)
+// Browse all active items with search and filters
 app.get('/browse', (req, res) => {
-    res.send('Browse page will be created later.');
+    const { search, category, type, location, colour, sort } = req.query;
+
+    let sql = `
+        SELECT items.*, users.full_name AS reporter_name
+        FROM items
+        JOIN users ON items.user_id = users.id
+        WHERE items.status = 'active'
+    `;
+    const params = [];
+
+    if (search) {
+        sql += ` AND (items.item_name LIKE ? OR items.description LIKE ? OR items.location LIKE ?)`;
+        const like = `%${search}%`;
+        params.push(like, like, like);
+    }
+
+    if (category) {
+        sql += ` AND items.category = ?`;
+        params.push(category);
+    }
+
+    if (type) {
+        sql += ` AND items.report_type = ?`;
+        params.push(type);
+    }
+
+    if (location) {
+        sql += ` AND items.location LIKE ?`;
+        params.push(`%${location}%`);
+    }
+
+    if (colour) {
+        sql += ` AND items.colour LIKE ?`;
+        params.push(`%${colour}%`);
+    }
+
+    if (sort === 'oldest') {
+        sql += ` ORDER BY items.created_at ASC`;
+    } else {
+        sql += ` ORDER BY items.created_at DESC`;
+    }
+
+    db.query(sql, params, (error, items) => {
+        if (error) {
+            console.error('Browse error:', error);
+            items = [];
+        }
+
+        res.render('browse', {
+            items,
+            filters: {
+                search: search || '',
+                category: category || '',
+                type: type || '',
+                location: location || '',
+                colour: colour || '',
+                sort: sort || 'newest'
+            }
+        });
+    });
+});
+
+// Item details page
+app.get('/items/:id', (req, res) => {
+    const sql = `
+        SELECT items.*, users.full_name AS reporter_name
+        FROM items
+        JOIN users ON items.user_id = users.id
+        WHERE items.id = ?
+    `;
+
+    db.query(sql, [req.params.id], (error, results) => {
+        if (error) {
+            console.error('Item details error:', error);
+            return res.status(500).send('Something went wrong.');
+        }
+
+        if (results.length === 0) {
+            return res.status(404).send('Item not found.');
+        }
+
+        res.render('itemDetails', {
+            item: results[0]
+        });
+    });
 });
 
 // Report item: choose type page

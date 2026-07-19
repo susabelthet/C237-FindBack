@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Browse Items | FindBack</title>
+
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/browse.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <nav class="navbar">
+
+            <a href="/" class="logo">
+                <img src="/images/logo.png" alt="FindBack Logo" class="navbar-logo">
+            </a>
+
+            <div class="nav-links">
+                <a href="/">Home</a>
+                <a href="/browse" class="active">Browse</a>
+                <a href="/report-item">Report Item</a>
+                <% if (user) { %>
+                    <a href="/dashboard">Dashboard</a>
+                <% } %>
+            </div>
+
+            <div class="nav-buttons">
+                <% if (user) { %>
+                    <span class="nav-greeting">Hello, <%= user.full_name %></span>
+                    <a href="/logout" class="login-button">Logout</a>
+                <% } else { %>
+                    <a href="/login" class="login-button">Login</a>
+                    <a href="/register" class="register-button">Register</a>
+                <% } %>
+            </div>
+
+        </nav>
+    </header>
+
+    <main class="browse-page">
+
+        <h1 class="browse-title">Browse Lost & Found Items 🎀</h1>
+
+        <form action="/browse" method="GET" class="browse-filters">
+
+            <input
+                type="text"
+                name="search"
+                placeholder="Search items, location or description..."
+                value="<%= filters.search %>"
+                class="search-input"
+            >
+
+            <select name="type">
+                <option value="">All Types</option>
+                <option value="lost" <%= filters.type === 'lost' ? 'selected' : '' %>>Lost</option>
+                <option value="found" <%= filters.type === 'found' ? 'selected' : '' %>>Found</option>
+            </select>
+
+            <select name="category">
+                <option value="">All Categories</option>
+                <% ['Personal Item', 'Electronics', 'Stationery', 'Clothing', 'Cards & Documents', 'Others'].forEach(cat => { %>
+                    <option value="<%= cat %>" <%= filters.category === cat ? 'selected' : '' %>>
+                        <%= cat %>
+                    </option>
+                <% }) %>
+            </select>
+
+            <input
+                type="text"
+                name="location"
+                placeholder="Location"
+                value="<%= filters.location %>"
+            >
+
+            <select name="sort">
+                <option value="newest" <%= filters.sort === 'newest' ? 'selected' : '' %>>Newest</option>
+                <option value="oldest" <%= filters.sort === 'oldest' ? 'selected' : '' %>>Oldest</option>
+            </select>
+
+            <button type="submit" class="filter-button">Search</button>
+            <a href="/browse" class="clear-button">Clear</a>
+
+        </form>
+
+        <% if (items.length === 0) { %>
+            <p class="empty-message">
+                No items match your search. Try different keywords or filters.
+            </p>
+        <% } else { %>
+            <div class="item-grid">
+                <% items.forEach(item => { %>
+                    <div class="item-card">
+
+                        <div class="item-image-wrapper">
+                            <% if (item.image) { %>
+                                <img src="/uploads/<%= item.image %>" alt="<%= item.item_name %>">
+                            <% } else { %>
+                                <img src="/images/no-image.png" alt="No image available">
+                            <% } %>
+                            <span class="item-badge badge-<%= item.report_type %>">
+                                <%= item.report_type.toUpperCase() %>
+                            </span>
+                        </div>
+
+                        <div class="item-card-body">
+                            <h3><%= item.item_name %></h3>
+                            <p class="item-location"><%= item.location %></p>
+                            <p class="item-date">
+                                <%= new Date(item.date_lost_found).toLocaleDateString('en-SG') %>
+                            </p>
+                            <a href="/items/<%= item.id %>" class="view-details-button">
+                                View Details
+                            </a>
+                        </div>
+
+                    </div>
+                <% }) %>
+            </div>
+        <% } %>
+
+    </main>
+
+</body>
+</html>

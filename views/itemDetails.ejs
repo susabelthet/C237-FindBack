@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title><%= item.item_name %> | FindBack</title>
+
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/browse.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <nav class="navbar">
+
+            <a href="/" class="logo">
+                <img src="/images/logo.png" alt="FindBack Logo" class="navbar-logo">
+            </a>
+
+            <div class="nav-links">
+                <a href="/">Home</a>
+                <a href="/browse" class="active">Browse</a>
+                <a href="/report-item">Report Item</a>
+                <% if (user) { %>
+                    <a href="/dashboard">Dashboard</a>
+                <% } %>
+            </div>
+
+            <div class="nav-buttons">
+                <% if (user) { %>
+                    <span class="nav-greeting">Hello, <%= user.full_name %></span>
+                    <a href="/logout" class="login-button">Logout</a>
+                <% } else { %>
+                    <a href="/login" class="login-button">Login</a>
+                    <a href="/register" class="register-button">Register</a>
+                <% } %>
+            </div>
+
+        </nav>
+    </header>
+
+    <main class="item-details-page">
+
+        <section class="item-details-card">
+
+            <div class="item-details-image">
+                <% if (item.image) { %>
+                    <img src="/uploads/<%= item.image %>" alt="<%= item.item_name %>">
+                <% } else { %>
+                    <img src="/images/no-image.png" alt="No image available">
+                <% } %>
+                <span class="item-badge badge-<%= item.report_type %>">
+                    <%= item.report_type.toUpperCase() %>
+                </span>
+            </div>
+
+            <div class="item-details-info">
+
+                <h1><%= item.item_name %></h1>
+
+                <table class="details-table">
+                    <tr>
+                        <th>Category</th>
+                        <td><%= item.category || '-' %></td>
+                    </tr>
+                    <tr>
+                        <th>Colour</th>
+                        <td><%= item.colour || '-' %></td>
+                    </tr>
+                    <tr>
+                        <th>Location</th>
+                        <td><%= item.location %></td>
+                    </tr>
+                    <tr>
+                        <th>Date <%= item.report_type === 'lost' ? 'Lost' : 'Found' %></th>
+                        <td><%= new Date(item.date_lost_found).toLocaleDateString('en-SG') %></td>
+                    </tr>
+                    <% if (item.report_type === 'found' && item.kept_at) { %>
+                        <tr>
+                            <th>Currently Kept</th>
+                            <td><%= item.kept_at %></td>
+                        </tr>
+                    <% } %>
+                    <tr>
+                        <th>Reported By</th>
+                        <td><%= item.reporter_name %></td>
+                    </tr>
+                    <tr>
+                        <th>Status</th>
+                        <td class="status-<%= item.status %>"><%= item.status %></td>
+                    </tr>
+                </table>
+
+                <% if (item.description) { %>
+                    <div class="item-description">
+                        <h3>Description</h3>
+                        <p><%= item.description %></p>
+                    </div>
+                <% } %>
+
+                <div class="item-details-actions">
+
+                    <% if (user && item.report_type === 'found' && item.status === 'active' && user.id !== item.user_id) { %>
+                        <a href="/items/<%= item.id %>/claim" class="claim-button">
+                            Submit Claim
+                        </a>
+                    <% } else if (!user && item.status === 'active') { %>
+                        <a href="/login" class="claim-button">
+                            Log in to Claim
+                        </a>
+                    <% } %>
+
+                    <a href="/browse" class="back-button">Back to Browse</a>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</body>
+</html>
