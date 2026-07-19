@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Login | FindBack</title>
+
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/auth.css">
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+    >
+</head>
+
+<body>
+
+    <header class="site-header">
+        <nav class="navbar">
+
+            <a href="/" class="logo">
+                <img
+                    src="/images/logo.png"
+                    alt="FindBack Logo"
+                    class="navbar-logo"
+                >
+            </a>
+
+            <div class="nav-links">
+                <a href="/">Home</a>
+                <a href="/browse">Browse</a>
+                <a href="/report-item">Report Item</a>
+            </div>
+
+            <div class="nav-buttons">
+                <a href="/login" class="login-button">Login</a>
+
+                <a href="/register" class="register-button">
+                    Register
+                </a>
+            </div>
+
+        </nav>
+    </header>
+
+    <main class="auth-page">
+
+        <section class="auth-card">
+
+            <div class="auth-heading">
+                <p>Welcome back</p>
+                <h1>Log in to FindBack</h1>
+
+                <span>
+                    Access your reports, claims and account dashboard.
+                </span>
+            </div>
+
+            <% if (error) { %>
+                <div class="message error-message">
+                    <%= error %>
+                </div>
+            <% } %>
+
+            <form action="/login" method="POST" class="auth-form">
+
+                <div class="form-group">
+                    <label for="email">Email</label>
+
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        placeholder="Enter your email"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+
+                    <div class="password-wrapper">
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            placeholder="Enter your password"
+                            required
+                        >
+                        <i class="fa-solid fa-eye toggle-password" id="togglePassword"></i>
+                    </div>
+                </div>
+
+                <button type="submit" class="auth-submit-button">
+                    Log In
+                </button>
+
+            </form>
+
+            <p class="auth-footer">
+                Don't have an account?
+                <a href="/register">Register here</a>
+            </p>
+
+        </section>
+
+    </main>
+
+    <script>
+        const toggle = document.getElementById('togglePassword');
+        const passwordInput = document.getElementById('password');
+
+        toggle.addEventListener('click', () => {
+            const isHidden = passwordInput.type === 'password';
+            passwordInput.type = isHidden ? 'text' : 'password';
+            toggle.classList.toggle('fa-eye');
+            toggle.classList.toggle('fa-eye-slash');
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>My Dashboard | FindBack</title>
+
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
+</head>
+
+<body>
+
+<header class="site-header">
+    <nav class="navbar">
+
+        <a href="/" class="logo">
+            <img
+                src="/images/logo.png"
+                alt="FindBack Logo"
+                class="navbar-logo"
+            >
+        </a>
+
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/browse">Browse</a>
+            <a href="/report-item">Report Item</a>
+            <a href="/dashboard" class="active">Dashboard</a>
+        </div>
+
+        <div class="nav-buttons">
+            <span class="nav-greeting">Hello, <%= user.full_name %></span>
+            <a href="/logout" class="login-button">Logout</a>
+        </div>
+
+    </nav>
+</header>
+<main class="dashboard-page">
+
+    <div class="dashboard-container">
+
+        <section class="dashboard-welcome">
+            <h1>
+                Welcome, <span><%= user.full_name %></span> 🎀
+            </h1>
+
+            <p>Manage your reports and claims here.</p>
+        </section>
+
+        <section class="dashboard-cards">
+
+            <div class="dashboard-card">
+                <h2><%= stats.myReports %></h2>
+                <p>My Reports</p>
+            </div>
+
+            <div class="dashboard-card">
+                <h2><%= stats.pendingClaims %></h2>
+                <p>Pending Claims</p>
+            </div>
+
+            <div class="dashboard-card">
+                <h2><%= stats.approvedClaims %></h2>
+                <p>Approved</p>
+            </div>
+
+            <div class="dashboard-card">
+                <h2><%= stats.rejectedClaims %></h2>
+                <p>Rejected</p>
+            </div>
+
+        </section>
+
+        <section class="dashboard-section">
+
+            <div class="dashboard-section-header">
+                <h2>My Reports</h2>
+            </div>
+
+            <table class="dashboard-table">
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th>Type</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <% if (myReports.length === 0) { %>
+                        <tr>
+                            <td colspan="5" class="empty-message">
+                                You have not reported any items yet.
+                            </td>
+                        </tr>
+                    <% } else { %>
+                        <% myReports.forEach(item => { %>
+                            <tr>
+                                <td><%= item.item_name %></td>
+                                <td class="type-<%= item.report_type %>">
+                                    <%= item.report_type %>
+                                </td>
+                                <td class="status-<%= item.status %>">
+                                    <%= item.status %>
+                                </td>
+                                <td>
+                                    <%= new Date(item.created_at).toLocaleDateString('en-SG') %>
+                                </td>
+                                <td>
+                                    <a href="/items/<%= item.id %>">View</a>
+                                    <% if (item.status === 'active') { %>
+                                        <a href="/items/<%= item.id %>/edit">Edit</a>
+                                        <form
+                                            action="/items/<%= item.id %>/delete"
+                                            method="POST"
+                                            class="inline-form"
+                                            onsubmit="return confirm('Delete this report?');"
+                                        >
+                                            <button type="submit" class="link-button">
+                                                Delete
+                                            </button>
+                                        </form>
+                                    <% } %>
+                                </td>
+                            </tr>
+                        <% }) %>
+                    <% } %>
+                </tbody>
+            </table>
+
+        </section>
+
+        <section class="dashboard-section">
+
+            <div class="dashboard-section-header">
+                <h2>My Claims</h2>
+            </div>
+
+            <table class="dashboard-table">
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <% if (myClaims.length === 0) { %>
+                        <tr>
+                            <td colspan="4" class="empty-message">
+                                You have not made any claims yet.
+                            </td>
+                        </tr>
+                    <% } else { %>
+                        <% myClaims.forEach(claim => { %>
+                            <tr>
+                                <td><%= claim.item_name %></td>
+                                <td class="status-<%= claim.status %>">
+                                    <%= claim.status %>
+                                </td>
+                                <td>
+                                    <%= new Date(claim.created_at).toLocaleDateString('en-SG') %>
+                                </td>
+                                <td>
+                                    <a href="/items/<%= claim.item_id %>">View Item</a>
+                                </td>
+                            </tr>
+                        <% }) %>
+                    <% } %>
+                </tbody>
+            </table>
+
+        </section>
+
+        <div class="dashboard-buttons">
+            <a href="/report-item?type=lost" class="dashboard-button">
+                Report Lost Item
+            </a>
+
+            
+                href="/report-item?type=found"
+                class="dashboard-button secondary"
+            >
+                Report Found Item
+            </a>
+        </div>
+
+    </div>
+
+</main>
+
+</body>
+</html>

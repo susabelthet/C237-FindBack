@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Admin Dashboard | FindBack</title>
+
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
+</head>
+
+<body>
+
+<header class="site-header">
+    <nav class="navbar">
+
+        <a href="/" class="logo">
+            <img
+                src="/images/logo.png"
+                alt="FindBack Logo"
+                class="navbar-logo"
+            >
+        </a>
+
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/admin" class="active">Admin Dashboard</a>
+            <a href="/admin/claims">Claims</a>
+            <a href="/admin/reports">Reports</a>
+        </div>
+
+        <div class="nav-buttons">
+            <span class="nav-greeting">Hello, <%= user.full_name %></span>
+            <a href="/logout" class="login-button">Logout</a>
+        </div>
+
+    </nav>
+</header>
+
+<main class="dashboard-page">
+
+    <div class="dashboard-container">
+
+        <section class="dashboard-welcome">
+            <h1>
+                Admin Dashboard
+            </h1>
+
+            <p>
+                Welcome, <%= user.full_name %>. Manage FindBack here.
+            </p>
+        </section>
+
+        <section class="dashboard-cards">
+
+            <div class="dashboard-card">
+                <h2><%= stats.totalUsers %></h2>
+                <p>Total Users</p>
+            </div>
+
+            <div class="dashboard-card">
+                <h2><%= stats.activeReports %></h2>
+                <p>Active Reports</p>
+            </div>
+
+            <div class="dashboard-card">
+                <h2><%= stats.pendingClaims %></h2>
+                <p>Pending Claims</p>
+            </div>
+
+            <div class="dashboard-card">
+                <h2><%= stats.returnedItems %></h2>
+                <p>Returned Items</p>
+            </div>
+
+        </section>
+
+        <section class="dashboard-section">
+
+            <div class="dashboard-section-header">
+                <h2>Recent Pending Claims</h2>
+                <a href="/admin/claims" class="section-link">View all</a>
+            </div>
+
+            <table class="dashboard-table">
+                <thead>
+                    <tr>
+                        <th>Claimant</th>
+                        <th>Item</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <% if (pendingClaims.length === 0) { %>
+                        <tr>
+                            <td colspan="5" class="empty-message">
+                                No pending claims.
+                            </td>
+                        </tr>
+                    <% } else { %>
+                        <% pendingClaims.forEach(claim => { %>
+                            <tr>
+                                <td><%= claim.claimant_name %></td>
+                                <td><%= claim.item_name %></td>
+                                <td>
+                                    <%= new Date(claim.created_at).toLocaleDateString('en-SG') %>
+                                </td>
+                                <td class="status-<%= claim.status %>">
+                                    <%= claim.status %>
+                                </td>
+                                <td>
+                                    <a href="/admin/claims/<%= claim.id %>">Review</a>
+                                </td>
+                            </tr>
+                        <% }) %>
+                    <% } %>
+                </tbody>
+            </table>
+
+        </section>
+
+        <section class="dashboard-section">
+
+            <div class="dashboard-section-header">
+                <h2>Recent Reports</h2>
+                <a href="/admin/reports" class="section-link">View all</a>
+            </div>
+
+            <table class="dashboard-table">
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th>Reported By</th>
+                        <th>Type</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <% if (recentReports.length === 0) { %>
+                        <tr>
+                            <td colspan="5" class="empty-message">
+                                No reports yet.
+                            </td>
+                        </tr>
+                    <% } else { %>
+                        <% recentReports.forEach(item => { %>
+                            <tr>
+                                <td><%= item.item_name %></td>
+                                <td><%= item.reporter_name %></td>
+                                <td class="type-<%= item.report_type %>">
+                                    <%= item.report_type %>
+                                </td>
+                                <td>
+                                    <%= new Date(item.created_at).toLocaleDateString('en-SG') %>
+                                </td>
+                                <td>
+                                    <a href="/items/<%= item.id %>">View</a>
+                                </td>
+                            </tr>
+                        <% }) %>
+                    <% } %>
+                </tbody>
+            </table>
+
+        </section>
+
+    </div>
+
+</main>
+
+</body>
+</html>

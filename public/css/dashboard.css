@@ -1,0 +1,150 @@
+.dashboard-page {
+    min-height: 100vh;
+    background: #fffafa;
+    padding: 40px 7%;
+}
+
+.dashboard-container {
+    max-width: 1200px;
+    margin: auto;
+}
+
+.dashboard-welcome {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.dashboard-welcome h1 {
+    color: #333;
+    margin-bottom: 8px;
+}
+
+.dashboard-welcome span {
+    color: #ec4f83;
+}
+
+.dashboard-welcome p {
+    color: #777;
+}
+
+.dashboard-cards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+    margin-bottom: 30px;
+}
+
+.dashboard-card {
+    background: white;
+    border: 1px solid #f3d7e0;
+    border-radius: 12px;
+    padding: 22px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(236, 79, 131, 0.08);
+}
+
+.dashboard-card h2 {
+    color: #ec4f83;
+    font-size: 30px;
+    margin-bottom: 6px;
+}
+
+.dashboard-card p {
+    color: #555;
+    margin: 0;
+}
+
+.dashboard-section {
+    background: white;
+    border: 1px solid #f3d7e0;
+    border-radius: 12px;
+    padding: 25px;
+    margin-bottom: 25px;
+}
+
+.dashboard-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.dashboard-section-header h2 {
+    color: #333;
+}
+
+.dashboard-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.dashboard-table th,
+.dashboard-table td {
+    padding: 14px;
+    border-bottom: 1px solid #f1dfe5;
+    text-align: left;
+}
+
+.dashboard-table th {
+    color: #555;
+    background: #fff5f8;
+}
+
+.dashboard-table td {
+    color: #555;
+}
+
+.dashboard-actions a {
+    color: #ec4f83;
+    font-weight: 600;
+    text-decoration: none;
+    margin-right: 12px;
+}
+
+.dashboard-buttons {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
+
+.dashboard-button {
+    display: inline-block;
+    padding: 12px 24px;
+    border-radius: 8px;
+    background: #ec4f83;
+    color: white;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.dashboard-button.secondary {
+    background: white;
+    color: #ec4f83;
+    border: 1px solid #ec4f83;
+}
+
+.empty-message {
+    text-align: center;
+    color: #888;
+    padding: 25px;
+}
+
+@media (max-width: 800px) {
+    .dashboard-cards {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .dashboard-section {
+        overflow-x: auto;
+    }
+}
+
+@media (max-width: 500px) {
+    .dashboard-cards {
+        grid-template-columns: 1fr;
+    }
+
+    .dashboard-buttons {
+        flex-direction: column;
+    }
+}
