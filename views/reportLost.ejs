@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Report Lost Item | FindBack</title>
+
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/report.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <nav class="navbar">
+
+            <a href="/" class="logo">
+                <img src="/images/logo.png" alt="FindBack Logo" class="navbar-logo">
+            </a>
+
+            <div class="nav-links">
+                <a href="/">Home</a>
+                <a href="/browse">Browse</a>
+                <a href="/report-item" class="active">Report Item</a>
+                <a href="/dashboard">Dashboard</a>
+            </div>
+
+            <div class="nav-buttons">
+                <span class="nav-greeting">Hello, <%= user.full_name %></span>
+                <a href="/logout" class="login-button">Logout</a>
+            </div>
+
+        </nav>
+    </header>
+
+    <main class="report-page">
+
+        <section class="report-form-card">
+
+            <h1>Report a Lost Item 🎀</h1>
+
+            <% if (error) { %>
+                <div class="message error-message">
+                    <%= error %>
+                </div>
+            <% } %>
+
+            <form
+                action="/report-item/lost"
+                method="POST"
+                enctype="multipart/form-data"
+                class="report-form"
+            >
+
+                <div class="form-group">
+                    <label for="itemName">Item Name</label>
+                    <input
+                        type="text"
+                        id="itemName"
+                        name="itemName"
+                        placeholder="e.g. Black Wallet"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="category">Category</label>
+                    <select id="category" name="category" required>
+                        <option value="">Select Category</option>
+                        <option value="Personal Item">Personal Item</option>
+                        <option value="Electronics">Electronics</option>
+                        <option value="Stationery">Stationery</option>
+                        <option value="Clothing">Clothing</option>
+                        <option value="Cards & Documents">Cards & Documents</option>
+                        <option value="Others">Others</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="colour">Colour</label>
+                    <input
+                        type="text"
+                        id="colour"
+                        name="colour"
+                        placeholder="e.g. Black"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="location">Location Lost</label>
+                    <input
+                        type="text"
+                        id="location"
+                        name="location"
+                        placeholder="e.g. Library Level 2"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="dateLost">Date Lost</label>
+                    <input
+                        type="date"
+                        id="dateLost"
+                        name="dateLost"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <textarea
+                        id="description"
+                        name="description"
+                        rows="4"
+                        placeholder="Describe the item, any unique marks, etc."
+                    ></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="image">Upload Image (optional)</label>
+                    <input
+                        type="file"
+                        id="image"
+                        name="image"
+                        accept="image/jpeg, image/png, image/webp"
+                    >
+                </div>
+
+                <button type="submit" class="report-submit-button">
+                    Submit Lost Report
+                </button>
+
+            </form>
+
+        </section>
+
+    </main>
+
+</body>
+</html>

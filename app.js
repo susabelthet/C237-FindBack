@@ -7,6 +7,33 @@ require('dotenv').config();
 
 const db = require('./dbConfig');
 
+const multer = require('multer');
+
+// Multer setup for item photos
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, path.join(__dirname, 'public', 'uploads'));
+    },
+    filename: (req, file, cb) => {
+        const uniqueName = Date.now() + '-' + Math.round(Math.random() * 1e9);
+        const extension = path.extname(file.originalname);
+        cb(null, uniqueName + extension);
+    }
+});
+
+const upload = multer({
+    storage: storage,
+    limits: { fileSize: 5 * 1024 * 1024 },   // 5MB max
+    fileFilter: (req, file, cb) => {
+        const allowed = ['image/jpeg', 'image/png', 'image/webp'];
+        if (allowed.includes(file.mimetype)) {
+            cb(null, true);
+        } else {
+            cb(new Error('Only JPG, PNG or WEBP images are allowed.'));
+        }
+    }
+});
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -86,9 +113,124 @@ app.get('/browse', (req, res) => {
     res.send('Browse page will be created later.');
 });
 
-// Temporary report item page (to be built)
+// Report item: choose type page
 app.get('/report-item', isLoggedIn, (req, res) => {
-    res.send('Report Item page will be created later.');
+    res.render('reportChoose');
+});
+
+// Report lost item form
+app.get('/report-item/lost', isLoggedIn, (req, res) => {
+    res.render('reportLost', { error: null });
+});
+
+// Report found item form
+app.get('/report-item/found', isLoggedIn, (req, res) => {
+    res.render('reportFound', { error: null });
+});
+
+// Submit lost item report
+app.post('/report-item/lost', isLoggedIn, (req, res) => {
+    upload.single('image')(req, res, (uploadError) => {
+        if (uploadError) {
+            return res.render('reportLost', {
+                error: uploadError.message
+            });
+        }
+
+        const { itemName, category, colour, location, dateLost, description } = req.body;
+
+        if (!itemName || !category || !location || !dateLost) {
+            return res.render('reportLost', {
+                error: 'Please fill in the item name, category, location and date.'
+            });
+        }
+
+        const imageFilename = req.file ? req.file.filename : null;
+
+        const sql = `
+            INSERT INTO items
+                (user_id, item_name, description, category, colour,
+                 report_type, location, date_lost_found, image, status)
+            VALUES (?, ?, ?, ?, ?, 'lost', ?, ?, ?, 'active')
+        `;
+
+        db.query(
+            sql,
+            [
+                req.session.user.id,
+                itemName,
+                description || null,
+                category,
+                colour || null,
+                location,
+                dateLost,
+                imageFilename
+            ],
+            (error) => {
+                if (error) {
+                    console.error('Report lost item error:', error);
+                    return res.render('reportLost', {
+                        error: 'Something went wrong. Please try again.'
+                    });
+                }
+
+                res.redirect('/dashboard');
+            }
+        );
+    });
+});
+
+// Submit found item report
+app.post('/report-item/found', isLoggedIn, (req, res) => {
+    upload.single('image')(req, res, (uploadError) => {
+        if (uploadError) {
+            return res.render('reportFound', {
+                error: uploadError.message
+            });
+        }
+
+        const { itemName, category, colour, location, dateFound, keptAt, description } = req.body;
+
+        if (!itemName || !category || !location || !dateFound || !keptAt) {
+            return res.render('reportFound', {
+                error: 'Please fill in the item name, category, location, date and where the item is kept.'
+            });
+        }
+
+        const imageFilename = req.file ? req.file.filename : null;
+
+        const sql = `
+            INSERT INTO items
+                (user_id, item_name, description, category, colour,
+                 report_type, location, date_lost_found, kept_at, image, status)
+            VALUES (?, ?, ?, ?, ?, 'found', ?, ?, ?, ?, 'active')
+        `;
+
+        db.query(
+            sql,
+            [
+                req.session.user.id,
+                itemName,
+                description || null,
+                category,
+                colour || null,
+                location,
+                dateFound,
+                keptAt,
+                imageFilename
+            ],
+            (error) => {
+                if (error) {
+                    console.error('Report found item error:', error);
+                    return res.render('reportFound', {
+                        error: 'Something went wrong. Please try again.'
+                    });
+                }
+
+                res.redirect('/dashboard');
+            }
+        );
+    });
 });
 
 // =========================================

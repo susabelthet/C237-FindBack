@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Report Item | FindBack</title>
+
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/report.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <nav class="navbar">
+
+            <a href="/" class="logo">
+                <img src="/images/logo.png" alt="FindBack Logo" class="navbar-logo">
+            </a>
+
+            <div class="nav-links">
+                <a href="/">Home</a>
+                <a href="/browse">Browse</a>
+                <a href="/report-item" class="active">Report Item</a>
+                <a href="/dashboard">Dashboard</a>
+            </div>
+
+            <div class="nav-buttons">
+                <span class="nav-greeting">Hello, <%= user.full_name %></span>
+                <a href="/logout" class="login-button">Logout</a>
+            </div>
+
+        </nav>
+    </header>
+
+    <main class="report-page">
+
+        <h1 class="report-title">What would you like to report?</h1>
+
+        <div class="report-choice-cards">
+
+            <div class="report-choice-card">
+                <div class="choice-emoji">👜</div>
+                <h2>Lost Item</h2>
+                <p>I lost something and need help to find it.</p>
+                <a href="/report-item/lost" class="report-lost-button">
+                    Report Lost Item
+                </a>
+            </div>
+
+            <div class="report-choice-card">
+                <div class="choice-emoji">🧸</div>
+                <h2>Found Item</h2>
+                <p>I found something and want to return it.</p>
+                <a href="/report-item/found" class="report-found-button">
+                    Report Found Item
+                </a>
+            </div>
+
+        </div>
+
+    </main>
+
+</body>
+</html>
