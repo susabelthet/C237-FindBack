@@ -199,3 +199,54 @@
     font-size: 72px;
     margin-bottom: 16px;
 }
+
+.claim-item-summary {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    background: #fff0f4;
+    border-radius: 14px;
+    padding: 14px;
+    margin-bottom: 24px;
+}
+
+.claim-item-summary img {
+    width: 90px;
+    height: 90px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.claim-item-summary h3 {
+    color: #d6336c;
+    margin-bottom: 4px;
+}
+
+.claim-item-summary p {
+    color: #8a5a63;
+    font-size: 0.85rem;
+}
+
+.edit-current-image {
+    width: 140px;
+    border-radius: 12px;
+    border: 1.5px solid #f3c4d3;
+}
+
+.no-image-text {
+    color: #8a5a63;
+    font-size: 0.9rem;
+}
+
+.cancel-link {
+    display: block;
+    text-align: center;
+    margin-top: 14px;
+    color: #e64980;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.cancel-link:hover {
+    text-decoration: underline;
+}

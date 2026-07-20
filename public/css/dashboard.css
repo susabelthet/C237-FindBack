@@ -148,3 +148,49 @@
         flex-direction: column;
     }
 }
+
+/* Action links/buttons in dashboard tables */
+
+.dashboard-table td:last-child {
+    white-space: nowrap;
+}
+
+.action-link {
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    text-decoration: none;
+    margin-right: 6px;
+    color: #e64980;
+    border: 1.5px solid #e64980;
+    background: #ffffff;
+    transition: background 0.2s ease;
+}
+
+.action-link:hover {
+    background: #ffe3ec;
+}
+
+.inline-form {
+    display: inline;
+}
+
+.link-button {
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    border: 1.5px solid #fa5252;
+    background: #ffffff;
+    color: #fa5252;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.2s ease;
+}
+
+.link-button:hover {
+    background: #ffe3e3;
+}

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Claim Item | FindBack</title>
+
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/report.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <nav class="navbar">
+
+            <a href="/" class="logo">
+                <img src="/images/logo.png" alt="FindBack Logo" class="navbar-logo">
+            </a>
+
+            <div class="nav-links">
+                <a href="/">Home</a>
+                <a href="/browse" class="active">Browse</a>
+                <a href="/report-item">Report Item</a>
+                <a href="/dashboard">Dashboard</a>
+            </div>
+
+            <div class="nav-buttons">
+                <span class="nav-greeting">Hello, <%= user.full_name %></span>
+                <a href="/logout" class="login-button">Logout</a>
+            </div>
+
+        </nav>
+    </header>
+
+    <main class="report-page">
+
+        <section class="report-form-card">
+
+            <h1>Claim Item 🎀</h1>
+
+            <div class="claim-item-summary">
+                <% if (item.image) { %>
+                    <img src="/uploads/<%= item.image %>" alt="<%= item.item_name %>">
+                <% } else { %>
+                    <img src="/images/no-image.png" alt="No image available">
+                <% } %>
+                <div>
+                    <h3><%= item.item_name %></h3>
+                    <p>Found at <%= item.location %></p>
+                    <p>
+                        Date: <%= new Date(item.date_lost_found).toLocaleDateString('en-SG') %>
+                    </p>
+                </div>
+            </div>
+
+            <% if (error) { %>
+                <div class="message error-message">
+                    <%= error %>
+                </div>
+            <% } %>
+
+            <form action="/items/<%= item.id %>/claim" method="POST" class="report-form">
+
+                <div class="form-group">
+                    <label for="claimReason">
+                        Why do you think this item belongs to you?
+                    </label>
+                    <textarea
+                        id="claimReason"
+                        name="claimReason"
+                        rows="3"
+                        required
+                        placeholder="Explain how you can prove this item is yours."
+                    ></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="proofDescription">
+                        Describe a detail that was not shown publicly
+                    </label>
+                    <textarea
+                        id="proofDescription"
+                        name="proofDescription"
+                        rows="2"
+                        placeholder="e.g. My student card and a hair tie are inside the wallet."
+                    ></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="additionalProof">
+                        Additional proof (if any)
+                    </label>
+                    <textarea
+                        id="additionalProof"
+                        name="additionalProof"
+                        rows="2"
+                        placeholder="Anything else that supports your claim."
+                    ></textarea>
+                </div>
+
+                <button type="submit" class="report-submit-button">
+                    Submit Claim
+                </button>
+
+            </form>
+
+        </section>
+
+    </main>
+
+</body>
+</html>

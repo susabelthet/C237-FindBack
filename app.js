@@ -197,6 +197,251 @@ app.get('/items/:id', (req, res) => {
     });
 });
 
+// Claim form page
+app.get('/items/:id/claim', isLoggedIn, (req, res) => {
+    const sql = `
+        SELECT items.*, users.full_name AS reporter_name
+        FROM items
+        JOIN users ON items.user_id = users.id
+        WHERE items.id = ?
+    `;
+
+    db.query(sql, [req.params.id], (error, results) => {
+        if (error) {
+            console.error('Claim page error:', error);
+            return res.status(500).send('Something went wrong.');
+        }
+
+        if (results.length === 0) {
+            return res.status(404).send('Item not found.');
+        }
+
+        const item = results[0];
+
+        // Only active found items can be claimed, and not your own
+        if (item.report_type !== 'found' || item.status !== 'active') {
+            return res.redirect('/items/' + item.id);
+        }
+
+        if (item.user_id === req.session.user.id) {
+            return res.redirect('/items/' + item.id);
+        }
+
+        res.render('claimItem', {
+            item,
+            error: null
+        });
+    });
+});
+
+// Submit claim
+app.post('/items/:id/claim', isLoggedIn, (req, res) => {
+    const itemId = req.params.id;
+    const userId = req.session.user.id;
+    const { claimReason, proofDescription, additionalProof } = req.body;
+
+    const itemSql = 'SELECT * FROM items WHERE id = ?';
+
+    db.query(itemSql, [itemId], (itemError, itemResults) => {
+        if (itemError || itemResults.length === 0) {
+            console.error('Claim item lookup error:', itemError);
+            return res.status(404).send('Item not found.');
+        }
+
+        const item = itemResults[0];
+
+        // Server-side re-check of the same rules as the GET route
+        if (item.report_type !== 'found' || item.status !== 'active' || item.user_id === userId) {
+            return res.redirect('/items/' + itemId);
+        }
+
+        if (!claimReason) {
+            return res.render('claimItem', {
+                item,
+                error: 'Please explain why this item belongs to you.'
+            });
+        }
+
+        // Prevent duplicate pending claims by the same user on the same item
+        const dupSql = `
+            SELECT id FROM claims
+            WHERE item_id = ? AND claimant_id = ? AND status = 'pending'
+        `;
+
+        db.query(dupSql, [itemId, userId], (dupError, dupResults) => {
+            if (dupError) {
+                console.error('Duplicate claim check error:', dupError);
+                return res.render('claimItem', {
+                    item,
+                    error: 'Something went wrong. Please try again.'
+                });
+            }
+
+            if (dupResults.length > 0) {
+                return res.render('claimItem', {
+                    item,
+                    error: 'You already have a pending claim on this item.'
+                });
+            }
+
+            const insertSql = `
+                INSERT INTO claims
+                    (item_id, claimant_id, claim_reason, proof_description, additional_proof, status)
+                VALUES (?, ?, ?, ?, ?, 'pending')
+            `;
+
+            db.query(
+                insertSql,
+                [itemId, userId, claimReason, proofDescription || null, additionalProof || null],
+                (insertError) => {
+                    if (insertError) {
+                        console.error('Claim insert error:', insertError);
+                        return res.render('claimItem', {
+                            item,
+                            error: 'Something went wrong. Please try again.'
+                        });
+                    }
+
+                    res.redirect('/dashboard');
+                }
+            );
+        });
+    });
+});
+
+// Edit report form
+app.get('/items/:id/edit', isLoggedIn, (req, res) => {
+    const sql = 'SELECT * FROM items WHERE id = ?';
+
+    db.query(sql, [req.params.id], (error, results) => {
+        if (error) {
+            console.error('Edit page error:', error);
+            return res.status(500).send('Something went wrong.');
+        }
+
+        if (results.length === 0) {
+            return res.status(404).send('Item not found.');
+        }
+
+        const item = results[0];
+
+        // Ownership check: only the reporter can edit
+        if (item.user_id !== req.session.user.id) {
+            return res.status(403).send('You can only edit your own reports.');
+        }
+
+        // Only active reports can be edited
+        if (item.status !== 'active') {
+            return res.redirect('/dashboard');
+        }
+
+        res.render('editItem', {
+            item,
+            error: null
+        });
+    });
+});
+
+// Update report
+app.post('/items/:id/edit', isLoggedIn, (req, res) => {
+    upload.single('image')(req, res, (uploadError) => {
+        const itemId = req.params.id;
+
+        const findSql = 'SELECT * FROM items WHERE id = ?';
+
+        db.query(findSql, [itemId], (findError, results) => {
+            if (findError || results.length === 0) {
+                console.error('Edit lookup error:', findError);
+                return res.status(404).send('Item not found.');
+            }
+
+            const item = results[0];
+
+            // Re-check ownership and status on the POST as well
+            if (item.user_id !== req.session.user.id) {
+                return res.status(403).send('You can only edit your own reports.');
+            }
+
+            if (item.status !== 'active') {
+                return res.redirect('/dashboard');
+            }
+
+            if (uploadError) {
+                return res.render('editItem', {
+                    item,
+                    error: uploadError.message
+                });
+            }
+
+            const { itemName, category, colour, location, dateLostFound, keptAt, description } = req.body;
+
+            if (!itemName || !category || !location || !dateLostFound) {
+                return res.render('editItem', {
+                    item,
+                    error: 'Please fill in the item name, category, location and date.'
+                });
+            }
+
+            // Keep old image unless a new one was uploaded
+            const imageFilename = req.file ? req.file.filename : item.image;
+
+            const updateSql = `
+                UPDATE items
+                SET item_name = ?,
+                    category = ?,
+                    colour = ?,
+                    location = ?,
+                    date_lost_found = ?,
+                    kept_at = ?,
+                    description = ?,
+                    image = ?
+                WHERE id = ? AND user_id = ?
+            `;
+
+            db.query(
+                updateSql,
+                [
+                    itemName,
+                    category,
+                    colour || null,
+                    location,
+                    dateLostFound,
+                    keptAt || null,
+                    description || null,
+                    imageFilename,
+                    itemId,
+                    req.session.user.id
+                ],
+                (updateError) => {
+                    if (updateError) {
+                        console.error('Update error:', updateError);
+                        return res.render('editItem', {
+                            item,
+                            error: 'Something went wrong. Please try again.'
+                        });
+                    }
+
+                    res.redirect('/dashboard');
+                }
+            );
+        });
+    });
+});
+
+// Delete report
+app.post('/items/:id/delete', isLoggedIn, (req, res) => {
+    const sql = 'DELETE FROM items WHERE id = ? AND user_id = ?';
+
+    db.query(sql, [req.params.id, req.session.user.id], (error, result) => {
+        if (error) {
+            console.error('Delete error:', error);
+            return res.status(500).send('Something went wrong.');
+        }
+
+        res.redirect('/dashboard');
+    });
+});
+
 // Report item: choose type page
 app.get('/report-item', isLoggedIn, (req, res) => {
     res.render('reportChoose');

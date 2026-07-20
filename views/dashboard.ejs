@@ -111,9 +111,9 @@
                                     <%= new Date(item.created_at).toLocaleDateString('en-SG') %>
                                 </td>
                                 <td>
-                                    <a href="/items/<%= item.id %>">View</a>
+                                    <a href="/items/<%= item.id %>" class="action-link">View</a>
                                     <% if (item.status === 'active') { %>
-                                        <a href="/items/<%= item.id %>/edit">Edit</a>
+                                        <a href="/items/<%= item.id %>/edit" class="action-link">Edit</a>
                                         <form
                                             action="/items/<%= item.id %>/delete"
                                             method="POST"

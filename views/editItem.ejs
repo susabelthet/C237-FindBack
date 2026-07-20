@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Edit Report | FindBack</title>
+
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/report.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <nav class="navbar">
+
+            <a href="/" class="logo">
+                <img src="/images/logo.png" alt="FindBack Logo" class="navbar-logo">
+            </a>
+
+            <div class="nav-links">
+                <a href="/">Home</a>
+                <a href="/browse">Browse</a>
+                <a href="/report-item">Report Item</a>
+                <a href="/dashboard" class="active">Dashboard</a>
+            </div>
+
+            <div class="nav-buttons">
+                <span class="nav-greeting">Hello, <%= user.full_name %></span>
+                <a href="/logout" class="login-button">Logout</a>
+            </div>
+
+        </nav>
+    </header>
+
+    <main class="report-page">
+
+        <section class="report-form-card">
+
+            <h1>Edit Report 🎀</h1>
+
+            <% if (error) { %>
+                <div class="message error-message">
+                    <%= error %>
+                </div>
+            <% } %>
+
+            <form
+                action="/items/<%= item.id %>/edit"
+                method="POST"
+                enctype="multipart/form-data"
+                class="report-form"
+            >
+
+                <div class="form-group">
+                    <label for="itemName">Item Name</label>
+                    <input
+                        type="text"
+                        id="itemName"
+                        name="itemName"
+                        value="<%= item.item_name %>"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="category">Category</label>
+                    <select id="category" name="category" required>
+                        <% ['Personal Item', 'Electronics', 'Stationery', 'Clothing', 'Cards & Documents', 'Others'].forEach(cat => { %>
+                            <option value="<%= cat %>" <%= item.category === cat ? 'selected' : '' %>>
+                                <%= cat %>
+                            </option>
+                        <% }) %>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="colour">Colour</label>
+                    <input
+                        type="text"
+                        id="colour"
+                        name="colour"
+                        value="<%= item.colour || '' %>"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="location">
+                        Location <%= item.report_type === 'lost' ? 'Lost' : 'Found' %>
+                    </label>
+                    <input
+                        type="text"
+                        id="location"
+                        name="location"
+                        value="<%= item.location %>"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="dateLostFound">
+                        Date <%= item.report_type === 'lost' ? 'Lost' : 'Found' %>
+                    </label>
+                    <input
+                        type="date"
+                        id="dateLostFound"
+                        name="dateLostFound"
+                        value="<%= item.date_lost_found ? new Date(item.date_lost_found).toISOString().slice(0, 10) : '' %>"
+                        required
+                    >
+                </div>
+
+                <% if (item.report_type === 'found') { %>
+                    <div class="form-group">
+                        <label for="keptAt">Where is the item currently kept?</label>
+                        <input
+                            type="text"
+                            id="keptAt"
+                            name="keptAt"
+                            value="<%= item.kept_at || '' %>"
+                        >
+                    </div>
+                <% } %>
+
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <textarea
+                        id="description"
+                        name="description"
+                        rows="4"
+                    ><%= item.description || '' %></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Current Image</label>
+                    <% if (item.image) { %>
+                        <img
+                            src="/uploads/<%= item.image %>"
+                            alt="Current image"
+                            class="edit-current-image"
+                        >
+                    <% } else { %>
+                        <p class="no-image-text">No image uploaded.</p>
+                    <% } %>
+                </div>
+
+                <div class="form-group">
+                    <label for="image">Upload New Image (optional)</label>
+                    <input
+                        type="file"
+                        id="image"
+                        name="image"
+                        accept="image/jpeg, image/png, image/webp"
+                    >
+                </div>
+
+                <button type="submit" class="report-submit-button">
+                    Save Changes
+                </button>
+
+                <a href="/dashboard" class="cancel-link">Cancel</a>
+
+            </form>
+
+        </section>
+
+    </main>
+
+</body>
+</html>
