@@ -22,9 +22,15 @@
             <div class="nav-links">
                 <a href="/">Home</a>
                 <a href="/browse" class="active">Browse</a>
-                <a href="/report-item">Report Item</a>
-                <% if (user) { %>
-                    <a href="/dashboard">Dashboard</a>
+                <% if (user && user.role === 'admin') { %>
+                    <a href="/admin">Admin Dashboard</a>
+                    <a href="/admin/claims">Claims</a>
+                    <a href="/admin/reports">Reports</a>
+                <% } else { %>
+                    <a href="/report-item">Report Item</a>
+                    <% if (user) { %>
+                        <a href="/dashboard">Dashboard</a>
+                    <% } %>
                 <% } %>
             </div>
 

@@ -175,7 +175,7 @@ app.get('/browse', (req, res) => {
 // Item details page
 app.get('/items/:id', (req, res) => {
     const sql = `
-        SELECT items.*, users.full_name AS reporter_name
+        SELECT items.*, users.full_name AS reporter_name, users.email AS reporter_email
         FROM items
         JOIN users ON items.user_id = users.id
         WHERE items.id = ?

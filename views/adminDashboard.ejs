@@ -113,7 +113,7 @@
                                     <%= claim.status %>
                                 </td>
                                 <td>
-                                    <a href="/admin/claims/<%= claim.id %>">Review</a>
+                                    <a href="/admin/claims/<%= claim.id %>" class="action-link">Review</a>
                                 </td>
                             </tr>
                         <% }) %>
@@ -160,7 +160,7 @@
                                     <%= new Date(item.created_at).toLocaleDateString('en-SG') %>
                                 </td>
                                 <td>
-                                    <a href="/items/<%= item.id %>">View</a>
+                                    <a href="/items/<%= item.id %>" class="action-link">View</a>
                                 </td>
                             </tr>
                         <% }) %>

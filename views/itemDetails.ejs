@@ -22,9 +22,15 @@
             <div class="nav-links">
                 <a href="/">Home</a>
                 <a href="/browse" class="active">Browse</a>
-                <a href="/report-item">Report Item</a>
-                <% if (user) { %>
-                    <a href="/dashboard">Dashboard</a>
+                <% if (user && user.role === 'admin') { %>
+                    <a href="/admin">Admin Dashboard</a>
+                    <a href="/admin/claims">Claims</a>
+                    <a href="/admin/reports">Reports</a>
+                <% } else { %>
+                    <a href="/report-item">Report Item</a>
+                    <% if (user) { %>
+                        <a href="/dashboard">Dashboard</a>
+                    <% } %>
                 <% } %>
             </div>
 
@@ -87,6 +93,12 @@
                         <th>Reported By</th>
                         <td><%= item.reporter_name %></td>
                     </tr>
+                    <% if (user) { %>
+                        <tr>
+                            <th>Contact</th>
+                            <td><%= item.reporter_email %></td>
+                        </tr>
+                    <% } %>
                     <tr>
                         <th>Status</th>
                         <td class="status-<%= item.status %>"><%= item.status %></td>
@@ -102,7 +114,7 @@
 
                 <div class="item-details-actions">
 
-                    <% if (user && item.report_type === 'found' && item.status === 'active' && user.id !== item.user_id) { %>
+                    <% if (user && user.role !== 'admin' && item.report_type === 'found' && item.status === 'active' && user.id !== item.user_id) { %>
                         <a href="/items/<%= item.id %>/claim" class="claim-button">
                             Submit Claim
                         </a>
