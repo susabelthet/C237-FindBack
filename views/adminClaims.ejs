@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Claim Management | FindBack</title>
+
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <nav class="navbar">
+
+            <a href="/" class="logo">
+                <img src="/images/logo.png" alt="FindBack Logo" class="navbar-logo">
+            </a>
+
+            <div class="nav-links">
+                <a href="/">Home</a>
+                <a href="/admin">Admin Dashboard</a>
+                <a href="/admin/claims" class="active">Claims</a>
+                <a href="/admin/reports">Reports</a>
+            </div>
+
+            <div class="nav-buttons">
+                <span class="nav-greeting">Hello, <%= user.full_name %></span>
+                <a href="/logout" class="login-button">Logout</a>
+            </div>
+
+        </nav>
+    </header>
+
+    <main class="dashboard-page">
+
+        <div class="dashboard-container">
+
+            <section class="dashboard-welcome">
+                <h1>Claim Management 🎀</h1>
+                <p>Review and decide on submitted claims.</p>
+            </section>
+
+            <div class="status-tabs">
+                <a href="/admin/claims?status=pending" class="status-tab <%= currentStatus === 'pending' ? 'active-tab' : '' %>">Pending</a>
+                <a href="/admin/claims?status=approved" class="status-tab <%= currentStatus === 'approved' ? 'active-tab' : '' %>">Approved</a>
+                <a href="/admin/claims?status=rejected" class="status-tab <%= currentStatus === 'rejected' ? 'active-tab' : '' %>">Rejected</a>
+            </div>
+
+            <section class="dashboard-section">
+
+                <table class="dashboard-table">
+                    <thead>
+                        <tr>
+                            <th>Claim #</th>
+                            <th>Item</th>
+                            <th>Claimant</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <% if (claims.length === 0) { %>
+                            <tr>
+                                <td colspan="6" class="empty-message">
+                                    No <%= currentStatus %> claims.
+                                </td>
+                            </tr>
+                        <% } else { %>
+                            <% claims.forEach(claim => { %>
+                                <tr>
+                                    <td>#<%= claim.id %></td>
+                                    <td><%= claim.item_name %></td>
+                                    <td><%= claim.claimant_name %></td>
+                                    <td>
+                                        <%= new Date(claim.created_at).toLocaleDateString('en-SG') %>
+                                    </td>
+                                    <td class="status-<%= claim.status %>">
+                                        <%= claim.status %>
+                                    </td>
+                                    <td>
+                                        <a href="/admin/claims/<%= claim.id %>" class="action-link">Review</a>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        <% } %>
+                    </tbody>
+                </table>
+
+            </section>
+
+        </div>
+
+    </main>
+
+</body>
+</html>

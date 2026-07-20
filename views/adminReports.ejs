@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Manage Reports | FindBack</title>
+
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <nav class="navbar">
+
+            <a href="/" class="logo">
+                <img src="/images/logo.png" alt="FindBack Logo" class="navbar-logo">
+            </a>
+
+            <div class="nav-links">
+                <a href="/">Home</a>
+                <a href="/admin">Admin Dashboard</a>
+                <a href="/admin/claims">Claims</a>
+                <a href="/admin/reports" class="active">Reports</a>
+            </div>
+
+            <div class="nav-buttons">
+                <span class="nav-greeting">Hello, <%= user.full_name %></span>
+                <a href="/logout" class="login-button">Logout</a>
+            </div>
+
+        </nav>
+    </header>
+
+    <main class="dashboard-page">
+
+        <div class="dashboard-container">
+
+            <section class="dashboard-welcome">
+                <h1>Manage Reports 🎀</h1>
+                <p>Search, review and manage all item reports.</p>
+            </section>
+
+            <form action="/admin/reports" method="GET" class="admin-filter-bar">
+
+                <input
+                    type="text"
+                    name="search"
+                    placeholder="Search item name..."
+                    value="<%= filters.search %>"
+                >
+
+                <select name="type">
+                    <option value="">All Types</option>
+                    <option value="lost" <%= filters.type === 'lost' ? 'selected' : '' %>>Lost</option>
+                    <option value="found" <%= filters.type === 'found' ? 'selected' : '' %>>Found</option>
+                </select>
+
+                <select name="status">
+                    <option value="">All Statuses</option>
+                    <option value="active" <%= filters.status === 'active' ? 'selected' : '' %>>Active</option>
+                    <option value="claimed" <%= filters.status === 'claimed' ? 'selected' : '' %>>Claimed</option>
+                    <option value="returned" <%= filters.status === 'returned' ? 'selected' : '' %>>Returned</option>
+                </select>
+
+                <button type="submit" class="filter-button">Search</button>
+                <a href="/admin/reports" class="clear-button">Clear</a>
+
+            </form>
+
+            <section class="dashboard-section">
+
+                <table class="dashboard-table">
+                    <thead>
+                        <tr>
+                            <th>Item</th>
+                            <th>Reported By</th>
+                            <th>Type</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <% if (items.length === 0) { %>
+                            <tr>
+                                <td colspan="6" class="empty-message">
+                                    No reports match your filters.
+                                </td>
+                            </tr>
+                        <% } else { %>
+                            <% items.forEach(item => { %>
+                                <tr>
+                                    <td><%= item.item_name %></td>
+                                    <td><%= item.reporter_name %></td>
+                                    <td class="type-<%= item.report_type %>">
+                                        <%= item.report_type %>
+                                    </td>
+                                    <td class="status-<%= item.status %>">
+                                        <%= item.status %>
+                                    </td>
+                                    <td>
+                                        <%= new Date(item.created_at).toLocaleDateString('en-SG') %>
+                                    </td>
+                                    <td>
+                                        <a href="/items/<%= item.id %>" class="action-link">View</a>
+
+                                        <% if (item.status === 'claimed') { %>
+                                            <form
+                                                action="/admin/items/<%= item.id %>/return"
+                                                method="POST"
+                                                class="inline-form"
+                                                onsubmit="return confirm('Mark this item as returned? Has it been successfully returned to the rightful owner?');"
+                                            >
+                                                <button type="submit" class="return-button">
+                                                    Mark Returned
+                                                </button>
+                                            </form>
+                                        <% } %>
+
+                                        <form
+                                            action="/admin/items/<%= item.id %>/delete"
+                                            method="POST"
+                                            class="inline-form"
+                                            onsubmit="return confirm('Remove this report permanently?');"
+                                        >
+                                            <button type="submit" class="link-button">
+                                                Remove
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        <% } %>
+                    </tbody>
+                </table>
+
+            </section>
+
+        </div>
+
+    </main>
+
+</body>
+</html>

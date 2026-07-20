@@ -877,13 +877,224 @@ app.get('/admin', isAdmin, (req, res) => {
     });
 });
 
-// Temporary admin pages (to be built)
+// Admin: all claims with status filter
 app.get('/admin/claims', isAdmin, (req, res) => {
-    res.send('Admin claims page will be created later.');
+    const status = req.query.status || 'pending';
+
+    let sql = `
+        SELECT claims.*, items.item_name, items.location,
+               users.full_name AS claimant_name
+        FROM claims
+        JOIN items ON claims.item_id = items.id
+        JOIN users ON claims.claimant_id = users.id
+    `;
+    const params = [];
+
+    if (['pending', 'approved', 'rejected'].includes(status)) {
+        sql += ` WHERE claims.status = ?`;
+        params.push(status);
+    }
+
+    sql += ` ORDER BY claims.created_at DESC`;
+
+    db.query(sql, params, (error, claims) => {
+        if (error) {
+            console.error('Admin claims list error:', error);
+            claims = [];
+        }
+
+        res.render('adminClaims', {
+            claims,
+            currentStatus: status
+        });
+    });
 });
 
+// Admin: claim details page
+app.get('/admin/claims/:id', isAdmin, (req, res) => {
+    const sql = `
+        SELECT claims.*,
+               items.id AS item_id, items.item_name, items.location,
+               items.date_lost_found, items.image, items.status AS item_status,
+               users.full_name AS claimant_name, users.email AS claimant_email,
+               users.student_id AS claimant_student_id
+        FROM claims
+        JOIN items ON claims.item_id = items.id
+        JOIN users ON claims.claimant_id = users.id
+        WHERE claims.id = ?
+    `;
+
+    db.query(sql, [req.params.id], (error, results) => {
+        if (error) {
+            console.error('Admin claim details error:', error);
+            return res.status(500).send('Something went wrong.');
+        }
+
+        if (results.length === 0) {
+            return res.status(404).send('Claim not found.');
+        }
+
+        res.render('adminClaimDetails', {
+            claim: results[0]
+        });
+    });
+});
+
+// Admin: approve claim
+app.post('/admin/claims/:id/approve', isAdmin, (req, res) => {
+    const claimId = req.params.id;
+    const adminComment = req.body.adminComment || null;
+
+    const findSql = 'SELECT * FROM claims WHERE id = ?';
+
+    db.query(findSql, [claimId], (findError, results) => {
+        if (findError || results.length === 0) {
+            console.error('Approve claim lookup error:', findError);
+            return res.status(404).send('Claim not found.');
+        }
+
+        const claim = results[0];
+
+        if (claim.status !== 'pending') {
+            return res.redirect('/admin/claims');
+        }
+
+        const approveSql = `
+            UPDATE claims
+            SET status = 'approved', admin_comment = ?
+            WHERE id = ?
+        `;
+
+        db.query(approveSql, [adminComment, claimId], (approveError) => {
+            if (approveError) {
+                console.error('Approve claim error:', approveError);
+                return res.status(500).send('Something went wrong.');
+            }
+
+            // Item becomes claimed; other pending claims on it are rejected
+            const itemSql = `UPDATE items SET status = 'claimed' WHERE id = ?`;
+
+            db.query(itemSql, [claim.item_id], (itemError) => {
+                if (itemError) {
+                    console.error('Item status update error:', itemError);
+                }
+
+                const rejectOthersSql = `
+                    UPDATE claims
+                    SET status = 'rejected',
+                        admin_comment = 'Another claim for this item was approved.'
+                    WHERE item_id = ? AND id != ? AND status = 'pending'
+                `;
+
+                db.query(rejectOthersSql, [claim.item_id, claimId], (rejectError) => {
+                    if (rejectError) {
+                        console.error('Reject other claims error:', rejectError);
+                    }
+
+                    res.redirect('/admin/claims');
+                });
+            });
+        });
+    });
+});
+
+// Admin: reject claim
+app.post('/admin/claims/:id/reject', isAdmin, (req, res) => {
+    const claimId = req.params.id;
+    const adminComment = req.body.adminComment || null;
+
+    const sql = `
+        UPDATE claims
+        SET status = 'rejected', admin_comment = ?
+        WHERE id = ? AND status = 'pending'
+    `;
+
+    db.query(sql, [adminComment, claimId], (error) => {
+        if (error) {
+            console.error('Reject claim error:', error);
+            return res.status(500).send('Something went wrong.');
+        }
+
+        res.redirect('/admin/claims');
+    });
+});
+
+// Admin: all reports with filter
 app.get('/admin/reports', isAdmin, (req, res) => {
-    res.send('Admin reports page will be created later.');
+    const { search, type, status } = req.query;
+
+    let sql = `
+        SELECT items.*, users.full_name AS reporter_name
+        FROM items
+        JOIN users ON items.user_id = users.id
+        WHERE 1 = 1
+    `;
+    const params = [];
+
+    if (search) {
+        sql += ` AND items.item_name LIKE ?`;
+        params.push(`%${search}%`);
+    }
+
+    if (type === 'lost' || type === 'found') {
+        sql += ` AND items.report_type = ?`;
+        params.push(type);
+    }
+
+    if (['active', 'claimed', 'returned'].includes(status)) {
+        sql += ` AND items.status = ?`;
+        params.push(status);
+    }
+
+    sql += ` ORDER BY items.created_at DESC`;
+
+    db.query(sql, params, (error, items) => {
+        if (error) {
+            console.error('Admin reports error:', error);
+            items = [];
+        }
+
+        res.render('adminReports', {
+            items,
+            filters: {
+                search: search || '',
+                type: type || '',
+                status: status || ''
+            }
+        });
+    });
+});
+
+// Admin: mark item as returned
+app.post('/admin/items/:id/return', isAdmin, (req, res) => {
+    const sql = `
+        UPDATE items
+        SET status = 'returned'
+        WHERE id = ? AND status = 'claimed'
+    `;
+
+    db.query(sql, [req.params.id], (error) => {
+        if (error) {
+            console.error('Mark returned error:', error);
+            return res.status(500).send('Something went wrong.');
+        }
+
+        res.redirect('/admin/reports');
+    });
+});
+
+// Admin: remove a report
+app.post('/admin/items/:id/delete', isAdmin, (req, res) => {
+    const sql = 'DELETE FROM items WHERE id = ?';
+
+    db.query(sql, [req.params.id], (error) => {
+        if (error) {
+            console.error('Admin delete item error:', error);
+            return res.status(500).send('Something went wrong.');
+        }
+
+        res.redirect('/admin/reports');
+    });
 });
 
 // =========================================

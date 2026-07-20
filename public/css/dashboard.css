@@ -194,3 +194,187 @@
 .link-button:hover {
     background: #ffe3e3;
 }
+
+/* ---------- Admin: status tabs ---------- */
+
+.status-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 24px;
+}
+
+.status-tab {
+    padding: 9px 22px;
+    border-radius: 999px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #e64980;
+    border: 1.5px solid #e64980;
+    background: #ffffff;
+}
+
+.status-tab.active-tab {
+    background: #e64980;
+    color: #ffffff;
+}
+
+/* ---------- Admin: claim details ---------- */
+
+.claim-details-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 24px;
+}
+
+.claim-panel {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 22px;
+    box-shadow: 0 6px 18px rgba(214, 51, 108, 0.1);
+}
+
+.claim-panel-wide {
+    grid-column: 1 / -1;
+}
+
+.claim-panel h2 {
+    color: #d6336c;
+    font-size: 1.05rem;
+    margin: 14px 0 8px;
+}
+
+.claim-panel h2:first-child {
+    margin-top: 0;
+}
+
+.claim-panel p {
+    color: #4a2b33;
+    font-size: 0.93rem;
+    margin-bottom: 6px;
+    line-height: 1.5;
+}
+
+.claim-item-image {
+    width: 100%;
+    max-width: 220px;
+    border-radius: 12px;
+    margin-bottom: 12px;
+}
+
+/* ---------- Admin: decision forms ---------- */
+
+.claim-decision {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 22px;
+    box-shadow: 0 6px 18px rgba(214, 51, 108, 0.1);
+    margin-bottom: 24px;
+}
+
+.claim-decision h2 {
+    color: #d6336c;
+    margin-bottom: 14px;
+}
+
+.decision-form {
+    margin-bottom: 18px;
+}
+
+.decision-form textarea {
+    width: 100%;
+    padding: 11px 14px;
+    border: 1.5px solid #f3c4d3;
+    border-radius: 10px;
+    background: #fffafb;
+    font-family: inherit;
+    font-size: 0.92rem;
+    margin-bottom: 10px;
+    resize: vertical;
+}
+
+.approve-button {
+    padding: 11px 26px;
+    border: none;
+    border-radius: 999px;
+    background: #2b8a3e;
+    color: #ffffff;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.reject-button {
+    padding: 11px 26px;
+    border: none;
+    border-radius: 999px;
+    background: #fa5252;
+    color: #ffffff;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.approve-button:hover,
+.reject-button:hover {
+    opacity: 0.85;
+}
+
+.return-button {
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    border: 1.5px solid #2b8a3e;
+    background: #ffffff;
+    color: #2b8a3e;
+    cursor: pointer;
+    font-family: inherit;
+    margin-right: 6px;
+}
+
+.return-button:hover {
+    background: #d3f9d8;
+}
+
+/* ---------- Admin: filter bar ---------- */
+
+.admin-filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    background: #ffffff;
+    padding: 16px;
+    border-radius: 14px;
+    box-shadow: 0 6px 18px rgba(214, 51, 108, 0.1);
+    margin-bottom: 24px;
+}
+
+.admin-filter-bar input,
+.admin-filter-bar select {
+    padding: 10px 14px;
+    border: 1.5px solid #f3c4d3;
+    border-radius: 10px;
+    background: #fffafb;
+    font-family: inherit;
+    font-size: 0.92rem;
+}
+
+.admin-filter-bar input[name="search"] {
+    flex: 1;
+    min-width: 200px;
+}
+
+.back-link {
+    display: inline-block;
+    color: #e64980;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.back-link:hover {
+    text-decoration: underline;
+}
+
+.type-lost { color: #c2255c; font-weight: 600; }
+.type-found { color: #2b8a3e; font-weight: 600; }

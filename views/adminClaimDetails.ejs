@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Claim Details | FindBack</title>
+
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <nav class="navbar">
+
+            <a href="/" class="logo">
+                <img src="/images/logo.png" alt="FindBack Logo" class="navbar-logo">
+            </a>
+
+            <div class="nav-links">
+                <a href="/">Home</a>
+                <a href="/admin">Admin Dashboard</a>
+                <a href="/admin/claims" class="active">Claims</a>
+                <a href="/admin/reports">Reports</a>
+            </div>
+
+            <div class="nav-buttons">
+                <span class="nav-greeting">Hello, <%= user.full_name %></span>
+                <a href="/logout" class="login-button">Logout</a>
+            </div>
+
+        </nav>
+    </header>
+
+    <main class="dashboard-page">
+
+        <div class="dashboard-container">
+
+            <section class="dashboard-welcome">
+                <h1>Claim #<%= claim.id %> 🎀</h1>
+                <p>
+                    Status:
+                    <span class="status-<%= claim.status %>"><%= claim.status %></span>
+                </p>
+            </section>
+
+            <div class="claim-details-grid">
+
+                <section class="claim-panel">
+                    <h2>Item Information</h2>
+
+                    <% if (claim.image) { %>
+                        <img
+                            src="/uploads/<%= claim.image %>"
+                            alt="<%= claim.item_name %>"
+                            class="claim-item-image"
+                        >
+                    <% } else { %>
+                        <img
+                            src="/images/no-image.png"
+                            alt="No image available"
+                            class="claim-item-image"
+                        >
+                    <% } %>
+
+                    <p><strong><%= claim.item_name %></strong></p>
+                    <p>Found at <%= claim.location %></p>
+                    <p>
+                        Date: <%= new Date(claim.date_lost_found).toLocaleDateString('en-SG') %>
+                    </p>
+                    <p>
+                        Item status:
+                        <span class="status-<%= claim.item_status %>">
+                            <%= claim.item_status %>
+                        </span>
+                    </p>
+
+                    <a href="/items/<%= claim.item_id %>" class="action-link">
+                        View Full Item
+                    </a>
+                </section>
+
+                <section class="claim-panel">
+                    <h2>Claimant Information</h2>
+                    <p><strong><%= claim.claimant_name %></strong></p>
+                    <p>Student ID: <%= claim.claimant_student_id %></p>
+                    <p>Email: <%= claim.claimant_email %></p>
+                    <p>
+                        Submitted:
+                        <%= new Date(claim.created_at).toLocaleDateString('en-SG') %>
+                    </p>
+                </section>
+
+                <section class="claim-panel claim-panel-wide">
+                    <h2>Claim Reason</h2>
+                    <p><%= claim.claim_reason %></p>
+
+                    <% if (claim.proof_description) { %>
+                        <h2>Hidden Detail Provided</h2>
+                        <p><%= claim.proof_description %></p>
+                    <% } %>
+
+                    <% if (claim.additional_proof) { %>
+                        <h2>Additional Proof</h2>
+                        <p><%= claim.additional_proof %></p>
+                    <% } %>
+
+                    <% if (claim.admin_comment) { %>
+                        <h2>Admin Comment</h2>
+                        <p><%= claim.admin_comment %></p>
+                    <% } %>
+                </section>
+
+            </div>
+
+            <% if (claim.status === 'pending') { %>
+                <section class="claim-decision">
+
+                    <h2>Decision</h2>
+
+                    <form
+                        action="/admin/claims/<%= claim.id %>/approve"
+                        method="POST"
+                        class="decision-form"
+                        onsubmit="return confirm('Approve this claim? Other pending claims on this item will be rejected.');"
+                    >
+                        <textarea
+                            name="adminComment"
+                            rows="2"
+                            placeholder="Optional comment (visible in records)"
+                        ></textarea>
+
+                        <div class="decision-buttons">
+                            <button type="submit" class="approve-button">
+                                Approve Claim
+                            </button>
+                        </div>
+                    </form>
+
+                    <form
+                        action="/admin/claims/<%= claim.id %>/reject"
+                        method="POST"
+                        class="decision-form"
+                        onsubmit="return confirm('Reject this claim?');"
+                    >
+                        <textarea
+                            name="adminComment"
+                            rows="2"
+                            placeholder="Optional reason for rejection"
+                        ></textarea>
+
+                        <div class="decision-buttons">
+                            <button type="submit" class="reject-button">
+                                Reject Claim
+                            </button>
+                        </div>
+                    </form>
+
+                </section>
+            <% } %>
+
+            <a href="/admin/claims" class="back-link">← Back to Claims</a>
+
+        </div>
+
+    </main>
+
+</body>
+</html>
