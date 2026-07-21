@@ -55,7 +55,10 @@
                 <% if (item.image) { %>
                     <img src="/uploads/<%= item.image %>" alt="<%= item.item_name %>">
                 <% } else { %>
+                    <div class="no-image-placeholder">
                     <img src="/images/no-image.png" alt="No image available">
+                    <p>No image uploaded</p>
+            </div>
                 <% } %>
                 <span class="item-badge badge-<%= item.report_type %>">
                     <%= item.report_type.toUpperCase() %>
@@ -64,19 +67,24 @@
 
             <div class="item-details-info">
 
-                <h1><%= item.item_name %></h1>
+                <div class="item-title">
+                    <h1><%= item.item_name %></h1>
+                    <p class="item-subtitle"> //to indicate if the item is lost or found
+                        <%= item.report_type === 'lost' ? 'Lost Item' : 'Found Item' %>
+                    </p>
+                </div>
 
                 <table class="details-table">
                     <tr>
-                        <th>Category</th>
+                        <th>📂Category</th>
                         <td><%= item.category || '-' %></td>
                     </tr>
                     <tr>
-                        <th>Colour</th>
+                        <th>🎨Colour</th>
                         <td><%= item.colour || '-' %></td>
                     </tr>
                     <tr>
-                        <th>Location</th>
+                        <th>📍Location</th>
                         <td><%= item.location %></td>
                     </tr>
                     <tr>
@@ -85,7 +93,7 @@
                     </tr>
                     <% if (item.report_type === 'found' && item.kept_at) { %>
                         <tr>
-                            <th>Currently Kept</th>
+                            <th>📦Currently Kept</th>
                             <td><%= item.kept_at %></td>
                         </tr>
                     <% } %>
@@ -101,7 +109,21 @@
                     <% } %>
                     <tr>
                         <th>Status</th>
-                        <td class="status-<%= item.status %>"><%= item.status %></td>
+                        <td class="status-<%= item.status %>">
+
+                        <% if(item.status==="active"){ %>
+                        🟢 Active
+                        <% } %>
+
+                        <% if(item.status==="claimed"){ %>
+                        🟡 Claimed
+                        <% } %>
+
+                        <% if(item.status==="returned"){ %>
+                      ⚫ Returned
+                        <% } %> // color indicator for the status of the item
+
+                </td>
                     </tr>
                 </table>
 
@@ -124,7 +146,7 @@
                         </a>
                     <% } %>
 
-                    <a href="/browse" class="back-button">Back to Browse</a>
+                    <a href="/browse" class="back-button">←Back to Browse</a>
 
                 </div>
 

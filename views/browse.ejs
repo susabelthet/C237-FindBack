@@ -16,8 +16,10 @@
         <nav class="navbar">
 
             <a href="/" class="logo">
-                <img src="/images/logo.png" alt="FindBack Logo" class="navbar-logo">
-            </a>
+                <div class="no-image-placeholder">
+                <img src="/images/no-image.png" alt="No image available">
+                <p>No image uploaded</p>
+                </div>
 
             <div class="nav-links">
                 <a href="/">Home</a>
@@ -49,14 +51,18 @@
 
     <main class="browse-page">
 
-        <h1 class="browse-title">Browse Lost & Found Items 🎀</h1>
+        <h1 class="browse-title">Browse Lost & Found Items</h1>
+
+        <p class="browse-subtitle">
+            Search, filter and view reported lost and found items.
+        </p>
 
         <form action="/browse" method="GET" class="browse-filters">
 
             <input
                 type="text"
                 name="search"
-                placeholder="Search items, location or description..."
+                placeholder="🔍Search items, location or description..."
                 value="<%= filters.search %>"
                 class="search-input"
             >
@@ -79,7 +85,7 @@
             <input
                 type="text"
                 name="location"
-                placeholder="Location"
+                placeholder="📍Location"
                 value="<%= filters.location %>"
             >
 
@@ -89,13 +95,17 @@
             </select>
 
             <button type="submit" class="filter-button">Search</button>
-            <a href="/browse" class="clear-button">Clear</a>
+            <a href="/browse" class="clear-button">↺Clear</a>
 
         </form>
+        <p class="results-count">
+            Showing <strong><%= items.length %></strong> item(s)
+        </p>
 
         <% if (items.length === 0) { %>
             <p class="empty-message">
-                No items match your search. Try different keywords or filters.
+                🔍 No items found.      
+                Try changing your search keywords or filters.
             </p>
         <% } else { %>
             <div class="item-grid">
@@ -109,7 +119,7 @@
                                 <img src="/images/no-image.png" alt="No image available">
                             <% } %>
                             <span class="item-badge badge-<%= item.report_type %>">
-                                <%= item.report_type.toUpperCase() %>
+                                <%= item.report_type==="lost" ? "🔍 LOST" : "📍 FOUND" %>
                             </span>
                         </div>
 
@@ -120,7 +130,7 @@
                                 <%= new Date(item.date_lost_found).toLocaleDateString('en-SG') %>
                             </p>
                             <a href="/items/<%= item.id %>" class="view-details-button">
-                                View Details
+                                View Details →
                             </a>
                         </div>
 
@@ -133,3 +143,4 @@
 
 </body>
 </html>
+
