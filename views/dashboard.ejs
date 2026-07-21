@@ -49,6 +49,12 @@
             <p>Manage your reports and claims here.</p>
         </section>
 
+        <% if (message) { %>
+            <div class="success-message">
+                <%= message %>
+            </div>
+        <% } %>
+
         <section class="dashboard-cards">
 
             <div class="dashboard-card">
@@ -85,7 +91,7 @@
                         <th>Item</th>
                         <th>Type</th>
                         <th>Status</th>
-                        <th>Date</th>
+                        <th>Lost/Found Date</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -108,7 +114,7 @@
                                     <%= item.status %>
                                 </td>
                                 <td>
-                                    <%= new Date(item.created_at).toLocaleDateString('en-SG') %>
+                                    <%= new Date(item.date_lost_found).toLocaleDateString('en-SG') %>
                                 </td>
                                 <td>
                                     <a href="/items/<%= item.id %>" class="action-link">View</a>

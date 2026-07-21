@@ -421,6 +421,7 @@ app.post('/items/:id/edit', isLoggedIn, (req, res) => {
                         });
                     }
 
+                    req.session.message = 'Report updated successfully.';
                     res.redirect('/dashboard');
                 }
             );
@@ -430,16 +431,34 @@ app.post('/items/:id/edit', isLoggedIn, (req, res) => {
 
 // Delete report
 app.post('/items/:id/delete', isLoggedIn, (req, res) => {
-    const sql = 'DELETE FROM items WHERE id = ? AND user_id = ?';
+    const sql = `
+        DELETE FROM items
+        WHERE id = ?
+        AND user_id = ?
+        AND status = 'active'
+    `;
 
-    db.query(sql, [req.params.id, req.session.user.id], (error, result) => {
-        if (error) {
-            console.error('Delete error:', error);
-            return res.status(500).send('Something went wrong.');
+    db.query(
+        sql,
+        [req.params.id, req.session.user.id],
+        (error, result) => {
+            if (error) {
+                console.error('Delete error:', error);
+                return res.status(500).send(
+                    'Unable to delete the report.'
+                );
+            }
+
+            if (result.affectedRows === 0) {
+                return res.status(403).send(
+                    'This report cannot be deleted because it does not belong to you or is no longer active.'
+                );
+            }
+
+            req.session.message = 'Report deleted successfully.';
+            res.redirect('/dashboard');
         }
-
-        res.redirect('/dashboard');
-    });
+    );
 });
 
 // Report item: choose type page
@@ -804,10 +823,14 @@ app.get('/dashboard', isLoggedIn, (req, res) => {
                 rejectedClaims: myClaims.filter(c => c.status === 'rejected').length
             };
 
+            const message = req.session.message;
+            delete req.session.message;
+
             res.render('dashboard', {
                 stats,
                 myReports,
-                myClaims
+                myClaims,
+                message
             });
         });
     });
