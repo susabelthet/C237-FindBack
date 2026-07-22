@@ -17,8 +17,7 @@
 
             <a href="/" class="logo">
                 <div class="no-image-placeholder">
-                <img src="/images/no-image.png" alt="No image available">
-                <p>No image uploaded</p>
+                    
                 </div>
 
             <div class="nav-links">
@@ -95,7 +94,7 @@
             </select>
 
             <button type="submit" class="filter-button">Search</button>
-            <a href="/browse" class="clear-button">↺Clear</a>
+            <a href="/browse" class="clear-button">↺ Clear</a>
 
         </form>
         <p class="results-count">
@@ -116,7 +115,7 @@
                             <% if (item.image) { %>
                                 <img src="/uploads/<%= item.image %>" alt="<%= item.item_name %>">
                             <% } else { %>
-                                <img src="/images/no-image.png" alt="No image available">
+                                <img src="/images/no-image.jpg" alt="No image available">
                             <% } %>
                             <span class="item-badge badge-<%= item.report_type %>">
                                 <%= item.report_type==="lost" ? "🔍 LOST" : "📍 FOUND" %>
