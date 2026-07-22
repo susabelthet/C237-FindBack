@@ -4,13 +4,13 @@
 
 .report-page {
     min-height: calc(100vh - 90px);
-    background: linear-gradient(135deg, #fff5f7 0%, #ffe9ef 100%);
+    background: linear-gradient(135deg, #f8f6f2 0%, #eee8df 100%);
     padding: 48px 20px 80px;
 }
 
 .report-title {
     text-align: center;
-    color: #d6336c;
+    color: #8f846f;
     font-size: 2rem;
     margin-bottom: 40px;
 }
@@ -32,13 +32,14 @@
     padding: 32px 28px;
     width: 320px;
     text-align: center;
-    box-shadow: 0 8px 24px rgba(214, 51, 108, 0.12);
+    border: 1px solid #e3ddd4;
+    box-shadow: 0 8px 24px rgba(143, 132, 111, 0.12);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .report-choice-card:hover {
     transform: translateY(-6px);
-    box-shadow: 0 14px 32px rgba(214, 51, 108, 0.2);
+    box-shadow: 0 14px 32px rgba(143, 132, 111, 0.2);
 }
 
 .choice-image {
@@ -49,12 +50,12 @@
 }
 
 .report-choice-card h2 {
-    color: #d6336c;
+    color: #8f846f;
     margin-bottom: 8px;
 }
 
 .report-choice-card p {
-    color: #8a5a63;
+    color: #81786b;
     margin-bottom: 20px;
     font-size: 0.95rem;
 }
@@ -66,23 +67,26 @@
     border-radius: 999px;
     font-weight: 600;
     text-decoration: none;
-    transition: opacity 0.2s ease;
+    transition: background 0.2s ease, color 0.2s ease;
 }
 
 .report-lost-button {
-    background: #e64980;
+    background: #b8aa91;
     color: #ffffff;
 }
 
 .report-found-button {
     background: #ffffff;
-    color: #e64980;
-    border: 2px solid #e64980;
+    color: #8f846f;
+    border: 2px solid #b8aa91;
 }
 
-.report-lost-button:hover,
+.report-lost-button:hover {
+    background: #8f846f;
+}
+
 .report-found-button:hover {
-    opacity: 0.85;
+    background: #eee8df;
 }
 
 /* ---------- Report forms ---------- */
@@ -93,12 +97,13 @@
     padding: 40px 36px;
     max-width: 560px;
     margin: 0 auto;
-    box-shadow: 0 8px 24px rgba(214, 51, 108, 0.12);
+    border: 1px solid #e3ddd4;
+    box-shadow: 0 8px 24px rgba(143, 132, 111, 0.12);
 }
 
 .report-form-card h1 {
     text-align: center;
-    color: #d6336c;
+    color: #8f846f;
     font-size: 1.6rem;
     margin-bottom: 28px;
 }
@@ -110,7 +115,7 @@
 }
 
 .report-form label {
-    color: #8a5a63;
+    color: #81786b;
     font-weight: 600;
     margin-bottom: 8px;
     font-size: 0.95rem;
@@ -121,20 +126,21 @@
 .report-form select,
 .report-form textarea {
     padding: 12px 14px;
-    border: 1.5px solid #f3c4d3;
+    border: 1.5px solid #d8d0c4;
     border-radius: 12px;
-    background: #fffafb;
+    background: #fffdf9;
     font-size: 0.95rem;
     font-family: inherit;
-    color: #4a2b33;
+    color: #5f584d;
     outline: none;
-    transition: border-color 0.2s ease;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .report-form input:focus,
 .report-form select:focus,
 .report-form textarea:focus {
-    border-color: #e64980;
+    border-color: #b8aa91;
+    box-shadow: 0 0 0 3px rgba(184, 170, 145, 0.15);
 }
 
 .report-form textarea {
@@ -143,7 +149,7 @@
 
 .report-form input[type="file"] {
     padding: 10px 0;
-    color: #8a5a63;
+    color: #81786b;
     font-size: 0.9rem;
 }
 
@@ -152,17 +158,17 @@
     padding: 14px;
     border: none;
     border-radius: 999px;
-    background: #e64980;
+    background: #b8aa91;
     color: #ffffff;
     font-size: 1rem;
     font-weight: 600;
     cursor: pointer;
     margin-top: 8px;
-    transition: opacity 0.2s ease;
+    transition: background 0.2s ease;
 }
 
 .report-submit-button:hover {
-    opacity: 0.85;
+    background: #8f846f;
 }
 
 /* ---------- Messages ---------- */
@@ -177,9 +183,9 @@
 }
 
 .report-form-card .error-message {
-    background: #ffe3ec;
-    color: #c2255c;
-    border: 1.5px solid #faa2c1;
+    background: #f7e8e6;
+    color: #9b4d4d;
+    border: 1.5px solid #dfb8b2;
 }
 
 /* ---------- Responsive ---------- */
@@ -204,7 +210,7 @@
     display: flex;
     gap: 16px;
     align-items: center;
-    background: #fff0f4;
+    background: #f3efe9;
     border-radius: 14px;
     padding: 14px;
     margin-bottom: 24px;
@@ -218,23 +224,23 @@
 }
 
 .claim-item-summary h3 {
-    color: #d6336c;
+    color: #8f846f;
     margin-bottom: 4px;
 }
 
 .claim-item-summary p {
-    color: #8a5a63;
+    color: #81786b;
     font-size: 0.85rem;
 }
 
 .edit-current-image {
     width: 140px;
     border-radius: 12px;
-    border: 1.5px solid #f3c4d3;
+    border: 1.5px solid #d8d0c4;
 }
 
 .no-image-text {
-    color: #8a5a63;
+    color: #81786b;
     font-size: 0.9rem;
 }
 
@@ -242,7 +248,7 @@
     display: block;
     text-align: center;
     margin-top: 14px;
-    color: #e64980;
+    color: #8f846f;
     font-weight: 600;
     text-decoration: none;
 }
