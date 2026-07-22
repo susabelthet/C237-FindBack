@@ -517,10 +517,14 @@ app.post('/report-item/lost', isLoggedIn, (req, res) => {
             (error) => {
                 if (error) {
                     console.error('Report lost item error:', error);
+
                     return res.render('reportLost', {
                         error: 'Something went wrong. Please try again.'
                     });
                 }
+
+                req.session.message =
+                    'Lost item report submitted successfully.';
 
                 res.redirect('/dashboard');
             }
@@ -570,10 +574,14 @@ app.post('/report-item/found', isLoggedIn, (req, res) => {
             (error) => {
                 if (error) {
                     console.error('Report found item error:', error);
+
                     return res.render('reportFound', {
                         error: 'Something went wrong. Please try again.'
                     });
                 }
+
+                req.session.message =
+                    'Found item report submitted successfully.';
 
                 res.redirect('/dashboard');
             }
