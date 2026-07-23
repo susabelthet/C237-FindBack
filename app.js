@@ -845,16 +845,19 @@ app.get('/dashboard', isLoggedIn, (req, res) => {
 });
 
 // =========================================
-// ADMIN
+// ADMIN & ENHANCED ADMIN FEATURES
 // =========================================
 
+// Extended Main Dashboard with higher resolution statistics
 app.get('/admin', isAdmin, (req, res) => {
     const statsSql = `
         SELECT
             (SELECT COUNT(*) FROM users) AS totalUsers,
             (SELECT COUNT(*) FROM items WHERE status = 'active') AS activeReports,
             (SELECT COUNT(*) FROM claims WHERE status = 'pending') AS pendingClaims,
-            (SELECT COUNT(*) FROM items WHERE status = 'returned') AS returnedItems
+            (SELECT COUNT(*) FROM items WHERE status = 'returned') AS returnedItems,
+            (SELECT COUNT(*) FROM claims WHERE status = 'approved') AS approvedClaims,
+            (SELECT COUNT(*) FROM claims WHERE status = 'rejected') AS rejectedClaims
     `;
 
     const claimsSql = `
@@ -882,7 +885,9 @@ app.get('/admin', isAdmin, (req, res) => {
                 totalUsers: 0,
                 activeReports: 0,
                 pendingClaims: 0,
-                returnedItems: 0
+                returnedItems: 0,
+                approvedClaims: 0,
+                rejectedClaims: 0
             }];
         }
 
@@ -905,6 +910,59 @@ app.get('/admin', isAdmin, (req, res) => {
                 });
             });
         });
+    });
+});
+
+// Admin: View and manage all registered users
+app.get('/admin/users', isAdmin, (req, res) => {
+    const { search } = req.query;
+    let sql = `SELECT id, full_name, student_id, email, role, created_at FROM users`;
+    const params = [];
+
+    if (search) {
+        sql += ` WHERE full_name LIKE ? OR student_id LIKE ? OR email LIKE ?`;
+        const query = `%${search}%`;
+        params.push(query, query, query);
+    }
+
+    sql += ` ORDER BY created_at DESC`;
+
+    db.query(sql, params, (error, users) => {
+        if (error) {
+            console.error('Admin user list error:', error);
+            users = [];
+        }
+
+        res.render('adminUsers', {
+            users,
+            search: search || ''
+        });
+    });
+});
+
+// Admin: Toggle user roles (Grant/Revoke Admin Privileges)
+app.post('/admin/users/:id/role', isAdmin, (req, res) => {
+    const targetUserId = req.params.id;
+    const { newRole } = req.body;
+
+    // Prevent administrators from demoting themselves accidentally
+    if (parseInt(targetUserId) === req.session.user.id) {
+        return res.status(400).send('Action forbidden: You cannot modify your own administrative role.');
+    }
+
+    if (!['user', 'admin'].includes(newRole)) {
+        return res.status(400).send('Invalid role specified.');
+    }
+
+    const sql = `UPDATE users SET role = ? WHERE id = ?`;
+
+    db.query(sql, [newRole, targetUserId], (error) => {
+        if (error) {
+            console.error('User role update error:', error);
+            return res.status(500).send('Failed to update user role.');
+        }
+
+        res.redirect('/admin/users');
     });
 });
 
