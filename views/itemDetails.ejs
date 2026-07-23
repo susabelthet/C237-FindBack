@@ -66,10 +66,10 @@
             </div>
 
             <div class="item-details-info">
-
                 <div class="item-title">
                     <h1><%= item.item_name %></h1>
-                    <p class="item-subtitle"> //to indicate if the item is lost or found
+                    <%# to indicate if the item is lost or found %>
+                    <p class="item-subtitle">
                         <%= item.report_type === 'lost' ? 'Lost Item' : 'Found Item' %>
                     </p>
                 </div>
@@ -121,7 +121,7 @@
 
                         <% if(item.status==="returned"){ %>
                       ⚫ Returned
-                        <% } %> // color indicator for the status of the item
+                        <% } %>
 
                 </td>
                     </tr>

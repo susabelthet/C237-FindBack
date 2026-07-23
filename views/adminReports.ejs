@@ -100,11 +100,11 @@
                                 <tr>
                                     <td><%= item.item_name %></td>
                                     <td><%= item.reporter_name %></td>
-                                    <td class="type-<%= item.report_type %>">
-                                        <%= item.report_type %>
+                                    <td>
+                                        <span class="type-<%= item.report_type %>"><%= item.report_type %></span>
                                     </td>
-                                    <td class="status-<%= item.status %>">
-                                        <%= item.status %>
+                                    <td>
+                                        <span class="status-<%= item.status %>"><%= item.status %></span>
                                     </td>
                                     <td>
                                         <%= new Date(item.created_at).toLocaleDateString('en-SG') %>

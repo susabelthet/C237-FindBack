@@ -115,7 +115,7 @@
                             <% if (item.image) { %>
                                 <img src="/uploads/<%= item.image %>" alt="<%= item.item_name %>">
                             <% } else { %>
-                                <img src="/images/no-image.jpg" alt="No image available">
+                                <img src="/images/no-image.png" alt="No image available">
                             <% } %>
                             <span class="item-badge badge-<%= item.report_type %>">
                                 <%= item.report_type==="lost" ? "🔍 LOST" : "📍 FOUND" %>

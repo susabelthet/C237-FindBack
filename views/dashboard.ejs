@@ -116,11 +116,11 @@
                                                 <td>
                                                     <%= item.item_name %>
                                                 </td>
-                                                <td class="type-<%= item.report_type %>">
-                                                    <%= item.report_type %>
+                                                <td>
+                                                    <span class="type-<%= item.report_type %>"><%= item.report_type %></span>
                                                 </td>
-                                                <td class="status-<%= item.status %>">
-                                                    <%= item.status %>
+                                                 <td>
+                                                    <span class="status-<%= item.status %>"><%= item.status %></span>
                                                 </td>
                                                 <td>
                                                     <%= new Date(item.date_lost_found).toLocaleDateString('en-SG') %>
@@ -182,14 +182,14 @@
                                                 <td>
                                                     <%= claim.item_name %>
                                                 </td>
-                                                <td class="status-<%= claim.status %>">
-                                                    <%= claim.status %>
+                                                <td>
+                                                    <span class="status-<%= claim.status %>"><%= claim.status %></span>
                                                 </td>
                                                 <td>
                                                     <%= new Date(claim.created_at).toLocaleDateString('en-SG') %>
                                                 </td>
                                                 <td>
-                                                    <a href="/items/<%= claim.item_id %>">View Item</a>
+                                                   <a href="/items/<%= claim.item_id %>" class="action-link">View Item</a>
                                                 </td>
                                             </tr>
                                             <% }) %>

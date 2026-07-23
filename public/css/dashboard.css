@@ -500,3 +500,38 @@
     padding: 8px;
     background: var(--white);
 }
+
+.dashboard-card:nth-child(2) h2 { color: #e8a838; }  /* Pending - amber */
+.dashboard-card:nth-child(3) h2 { color: #2b8a3e; }  /* Approved - green */
+.dashboard-card:nth-child(4) h2 { color: #c92a2a; }  /* Rejected - red */
+
+.dashboard-card:nth-child(2) { background: #fff9e6; }
+.dashboard-card:nth-child(3) { background: #ebfbee; }
+.dashboard-card:nth-child(4) { background: #fff5f5; }
+
+.dashboard-table .type-lost,
+.dashboard-table .type-found,
+.dashboard-table .status-active,
+.dashboard-table .status-claimed,
+.dashboard-table .status-returned,
+.dashboard-table .status-pending,
+.dashboard-table .status-approved,
+.dashboard-table .status-rejected {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+}
+
+.type-lost     { background: #fff0f0; color: #c92a2a; }
+.type-found    { background: #ebfbee; color: #2b8a3e; }
+
+.status-active   { background: #ebfbee; color: #2b8a3e; }
+.status-claimed  { background: #fff4e6; color: #e8590c; }
+.status-returned { background: #f1f3f5; color: #495057; }
+
+.status-pending  { background: #fff9e6; color: #b8860b; }
+.status-approved { background: #ebfbee; color: #2b8a3e; }
+.status-rejected { background: #fff0f0; color: #c92a2a; }
