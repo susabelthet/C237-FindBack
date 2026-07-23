@@ -845,7 +845,7 @@ app.get('/dashboard', isLoggedIn, (req, res) => {
 });
 
 // =========================================
-// ADMIN & ENHANCED ADMIN FEATURES
+// ADMIN & ENHANCED ADMIN FEATURES - BY CRANBERRYSODA
 // =========================================
 
 // Extended Main Dashboard with higher resolution statistics
