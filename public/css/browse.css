@@ -189,7 +189,7 @@
 
 .item-details-page {
     min-height: calc(100vh - 90px);
-    background: linear-gradient(135deg, #fff5f7 0%, #ffe9ef 100%);
+    background: var(--background);
     padding: 48px 24px 80px;
 }
 
