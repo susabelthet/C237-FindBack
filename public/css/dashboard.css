@@ -488,3 +488,15 @@
         gap: 12px;
     }
 }
+
+.claim-proof-image {
+    width: 100%;
+    max-width: 420px;
+    max-height: 420px;
+    margin-top: 12px;
+    object-fit: contain;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 8px;
+    background: var(--white);
+}

@@ -37,82 +37,101 @@
     <main class="dashboard-page">
 
         <div class="dashboard-container">
-
+        
             <section class="dashboard-welcome">
-                <h1>Claim #<%= claim.id %> </h1>
+                <h1>Claim #<%= claim.id %>
+                </h1>
                 <p>
                     Status:
-                    <span class="status-<%= claim.status %>"><%= claim.status %></span>
+                    <span class="status-<%= claim.status %>">
+                        <%= claim.status %>
+                    </span>
                 </p>
             </section>
-
+        
             <div class="claim-details-grid">
-
+        
                 <section class="claim-panel">
                     <h2>Item Information</h2>
-
+        
                     <% if (claim.image) { %>
-                        <img
-                            src="/uploads/<%= claim.image %>"
-                            alt="<%= claim.item_name %>"
-                            class="claim-item-image"
-                        >
-                    <% } else { %>
-                        <img
-                            src="/images/no-image.png"
-                            alt="No image available"
-                            class="claim-item-image"
-                        >
-                    <% } %>
-
-                    <p><strong><%= claim.item_name %></strong></p>
-                    <p>Found at <%= claim.location %></p>
-                    <p>
-                        Date: <%= new Date(claim.date_lost_found).toLocaleDateString('en-SG') %>
-                    </p>
-                    <p>
-                        Item status:
-                        <span class="status-<%= claim.item_status %>">
-                            <%= claim.item_status %>
-                        </span>
-                    </p>
-
-                    <a href="/items/<%= claim.item_id %>" class="action-link">
-                        View Full Item
-                    </a>
+                        <img src="/uploads/<%= claim.image %>" alt="<%= claim.item_name %>" class="claim-item-image">
+                        <% } else { %>
+                            <img src="/images/no-image.png" alt="No image available" class="claim-item-image">
+                            <% } %>
+        
+                                <p><strong>
+                                        <%= claim.item_name %>
+                                    </strong></p>
+                                <p>Found at <%= claim.location %>
+                                </p>
+                                <p>
+                                    Date: <%= new Date(claim.date_lost_found).toLocaleDateString('en-SG') %>
+                                </p>
+                                <p>
+                                    Item status:
+                                    <span class="status-<%= claim.item_status %>">
+                                        <%= claim.item_status %>
+                                    </span>
+                                </p>
+        
+                                <a href="/items/<%= claim.item_id %>" class="action-link">
+                                    View Full Item
+                                </a>
                 </section>
-
+        
                 <section class="claim-panel">
                     <h2>Claimant Information</h2>
-                    <p><strong><%= claim.claimant_name %></strong></p>
-                    <p>Student ID: <%= claim.claimant_student_id %></p>
-                    <p>Email: <%= claim.claimant_email %></p>
+                    <p><strong>
+                            <%= claim.claimant_name %>
+                        </strong></p>
+                    <p>Student ID: <%= claim.claimant_student_id %>
+                    </p>
+                    <p>Email: <%= claim.claimant_email %>
+                    </p>
                     <p>
                         Submitted:
                         <%= new Date(claim.created_at).toLocaleDateString('en-SG') %>
                     </p>
                 </section>
-
+        
                 <section class="claim-panel claim-panel-wide">
                     <h2>Claim Reason</h2>
-                    <p><%= claim.claim_reason %></p>
-
+                    <p>
+                        <%= claim.claim_reason %>
+                    </p>
+        
                     <% if (claim.proof_description) { %>
                         <h2>Hidden Detail Provided</h2>
-                        <p><%= claim.proof_description %></p>
-                    <% } %>
-
-                    <% if (claim.additional_proof) { %>
-                        <h2>Additional Proof</h2>
-                        <p><%= claim.additional_proof %></p>
-                    <% } %>
-
-                    <% if (claim.admin_comment) { %>
-                        <h2>Admin Comment</h2>
-                        <p><%= claim.admin_comment %></p>
-                    <% } %>
+                        <p>
+                            <%= claim.proof_description %>
+                        </p>
+                        <% } %>
+        
+                            <% if (claim.additional_proof) { %>
+                                <h2>Additional Proof</h2>
+                                <p>
+                                    <%= claim.additional_proof %>
+                                </p>
+                                <% } %>
+        
+                                    <% if (claim.proof_image) { %>
+                                        <h2>Uploaded Proof Image</h2>
+        
+                                        <img src="/uploads/<%= claim.proof_image %>" alt="Claim proof image"
+                                            class="claim-proof-image">
+                                        <% } else { %>
+                                            <h2>Uploaded Proof Image</h2>
+                                            <p>No proof image was uploaded.</p>
+                                            <% } %>
+        
+                                                <% if (claim.admin_comment) { %>
+                                                    <h2>Admin Comment</h2>
+                                                    <p>
+                                                        <%= claim.admin_comment %>
+                                                    </p>
+                                                    <% } %>
                 </section>
-
             </div>
 
             <% if (claim.status === 'pending') { %>

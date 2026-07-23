@@ -236,73 +236,130 @@ app.get('/items/:id/claim', isLoggedIn, (req, res) => {
 
 // Submit claim
 app.post('/items/:id/claim', isLoggedIn, (req, res) => {
-    const itemId = req.params.id;
-    const userId = req.session.user.id;
-    const { claimReason, proofDescription, additionalProof } = req.body;
+    upload.single('proofImage')(req, res, (uploadError) => {
+        const itemId = req.params.id;
+        const userId = req.session.user.id;
 
-    const itemSql = 'SELECT * FROM items WHERE id = ?';
+        const {
+            claimReason,
+            proofDescription,
+            additionalProof
+        } = req.body;
 
-    db.query(itemSql, [itemId], (itemError, itemResults) => {
-        if (itemError || itemResults.length === 0) {
-            console.error('Claim item lookup error:', itemError);
-            return res.status(404).send('Item not found.');
-        }
+        const itemSql = 'SELECT * FROM items WHERE id = ?';
 
-        const item = itemResults[0];
+        db.query(itemSql, [itemId], (itemError, itemResults) => {
+            if (itemError || itemResults.length === 0) {
+                console.error('Claim item lookup error:', itemError);
+                return res.status(404).send('Item not found.');
+            }
 
-        // Server-side re-check of the same rules as the GET route
-        if (item.report_type !== 'found' || item.status !== 'active' || item.user_id === userId) {
-            return res.redirect('/items/' + itemId);
-        }
+            const item = itemResults[0];
 
-        if (!claimReason) {
-            return res.render('claimItem', {
-                item,
-                error: 'Please explain why this item belongs to you.'
-            });
-        }
-
-        // Prevent duplicate pending claims by the same user on the same item
-        const dupSql = `
-            SELECT id FROM claims
-            WHERE item_id = ? AND claimant_id = ? AND status = 'pending'
-        `;
-
-        db.query(dupSql, [itemId, userId], (dupError, dupResults) => {
-            if (dupError) {
-                console.error('Duplicate claim check error:', dupError);
+            if (uploadError) {
                 return res.render('claimItem', {
                     item,
-                    error: 'Something went wrong. Please try again.'
+                    error: uploadError.message
                 });
             }
 
-            if (dupResults.length > 0) {
+            // Only active found items can be claimed,
+            // and users cannot claim their own report
+            if (
+                item.report_type !== 'found' ||
+                item.status !== 'active' ||
+                item.user_id === userId
+            ) {
+                return res.redirect('/items/' + itemId);
+            }
+
+            if (!claimReason) {
                 return res.render('claimItem', {
                     item,
-                    error: 'You already have a pending claim on this item.'
+                    error: 'Please explain why this item belongs to you.'
                 });
             }
 
-            const insertSql = `
-                INSERT INTO claims
-                    (item_id, claimant_id, claim_reason, proof_description, additional_proof, status)
-                VALUES (?, ?, ?, ?, ?, 'pending')
+            // Store the uploaded proof image filename
+            const proofImage = req.file
+                ? req.file.filename
+                : null;
+
+            // Prevent duplicate pending claims
+            const duplicateSql = `
+                SELECT id
+                FROM claims
+                WHERE item_id = ?
+                AND claimant_id = ?
+                AND status = 'pending'
             `;
 
             db.query(
-                insertSql,
-                [itemId, userId, claimReason, proofDescription || null, additionalProof || null],
-                (insertError) => {
-                    if (insertError) {
-                        console.error('Claim insert error:', insertError);
+                duplicateSql,
+                [itemId, userId],
+                (duplicateError, duplicateResults) => {
+                    if (duplicateError) {
+                        console.error(
+                            'Duplicate claim check error:',
+                            duplicateError
+                        );
+
                         return res.render('claimItem', {
                             item,
                             error: 'Something went wrong. Please try again.'
                         });
                     }
 
-                    res.redirect('/dashboard');
+                    if (duplicateResults.length > 0) {
+                        return res.render('claimItem', {
+                            item,
+                            error:
+                                'You already have a pending claim on this item.'
+                        });
+                    }
+
+                    const insertSql = `
+                        INSERT INTO claims (
+                            item_id,
+                            claimant_id,
+                            claim_reason,
+                            proof_description,
+                            additional_proof,
+                            proof_image,
+                            status
+                        )
+                        VALUES (?, ?, ?, ?, ?, ?, 'pending')
+                    `;
+
+                    const values = [
+                        itemId,
+                        userId,
+                        claimReason,
+                        proofDescription || null,
+                        additionalProof || null,
+                        proofImage
+                    ];
+
+                    db.query(
+                        insertSql,
+                        values,
+                        (insertError) => {
+                            if (insertError) {
+                                console.error(
+                                    'Claim insert error:',
+                                    insertError
+                                );
+
+                                return res.render('claimItem', {
+                                    item,
+                                    error:
+                                        'Something went wrong. Please try again.'
+                                });
+                            }
+
+                            res.redirect('/dashboard');
+                        }
+                    );
                 }
             );
         });
